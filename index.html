@@ -603,6 +603,110 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
     <div class="edu-section-h"><h2>Guías financieras</h2><p>Aprende a tu ritmo — de lo básico a lo avanzado</p></div>
     <div class="guides-grid" id="guides-grid"></div>
 
+    <!-- SIMULADOR DE DEUDA -->
+    <div class="edu-section-h"><h2>Simulador de deuda con tarjeta</h2><p>Descubre cuánto pagarás realmente si solo cubres el mínimo</p></div>
+    <div class="calc-card" style="margin-bottom:40px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+        <div class="calc-row"><label>Deuda actual (MXN)</label><input id="td-deuda" type="number" value="20000" oninput="simDeuda()"></div>
+        <div class="calc-row"><label>Tasa anual (CAT %)</label><input id="td-cat" type="number" value="40" step="1" oninput="simDeuda()"></div>
+        <div class="calc-row"><label>Pago mensual (MXN)</label><input id="td-pago" type="number" value="600" oninput="simDeuda()"></div>
+      </div>
+      <div id="td-result" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px;padding:20px;background:#FCEBEB;border-radius:12px">
+        <div style="text-align:center"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:#A32D2D" id="td-meses">-</div><div style="font-size:11px;color:#A32D2D;margin-top:2px">Meses para liquidar</div></div>
+        <div style="text-align:center"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:#A32D2D" id="td-total">-</div><div style="font-size:11px;color:#A32D2D;margin-top:2px">Total pagado</div></div>
+        <div style="text-align:center"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:#A32D2D" id="td-intereses">-</div><div style="font-size:11px;color:#A32D2D;margin-top:2px">Solo en intereses</div></div>
+        <div style="text-align:center"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:#A32D2D" id="td-multiplo">-</div><div style="font-size:11px;color:#A32D2D;margin-top:2px">Veces más de lo pedido</div></div>
+      </div>
+      <div id="td-alerta" style="margin-top:12px;padding:12px 16px;background:#fff3cd;border-radius:8px;font-size:13px;color:#856404;display:none"></div>
+    </div>
+
+    <!-- COMPARADOR DE INSTRUMENTOS -->
+    <div class="edu-section-h"><h2>Comparador de instrumentos de inversión</h2><p>Encuentra el instrumento ideal para tu perfil</p></div>
+    <div style="margin-bottom:40px;overflow-x:auto">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--t3);align-self:center">Filtrar por riesgo:</span>
+        <button onclick="filterInstr(this,'todos')" class="edu-cat active" style="font-size:11px;padding:6px 14px">Todos</button>
+        <button onclick="filterInstr(this,'bajo')" class="edu-cat" style="font-size:11px;padding:6px 14px">Bajo riesgo</button>
+        <button onclick="filterInstr(this,'medio')" class="edu-cat" style="font-size:11px;padding:6px 14px">Medio riesgo</button>
+        <button onclick="filterInstr(this,'alto')" class="edu-cat" style="font-size:11px;padding:6px 14px">Alto riesgo</button>
+      </div>
+      <table id="instr-table" style="width:100%;border-collapse:collapse;background:var(--sur);border-radius:14px;overflow:hidden;border:0.5px solid var(--b)">
+        <thead>
+          <tr style="background:var(--gd)">
+            <th style="padding:12px 16px;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase">Instrumento</th>
+            <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase">Rendimiento est.</th>
+            <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase">Riesgo</th>
+            <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase">Liquidez</th>
+            <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase">Mínimo</th>
+            <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase">Ideal para</th>
+          </tr>
+        </thead>
+        <tbody id="instr-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- QUIZ PERFIL INVERSOR -->
+    <div class="edu-section-h"><h2>¿Cuál es tu perfil de inversor?</h2><p>Responde 6 preguntas y descubre qué estrategia de inversión es la ideal para ti</p></div>
+    <div class="calc-card" style="margin-bottom:40px" id="quiz-section">
+      <div id="quiz-container">
+        <div id="quiz-progress" style="height:4px;background:var(--b);border-radius:2px;margin-bottom:24px"><div id="quiz-bar" style="height:100%;background:var(--g);border-radius:2px;transition:width .4s;width:0%"></div></div>
+        <div id="quiz-q-label" style="font-size:10px;font-weight:700;color:var(--g);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Pregunta 1 de 6</div>
+        <div id="quiz-question" style="font-size:17px;font-weight:700;color:var(--t);margin-bottom:20px;line-height:1.4"></div>
+        <div id="quiz-options" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <div id="quiz-result" style="display:none;text-align:center;padding:16px 0">
+        <div style="font-size:48px;margin-bottom:12px" id="quiz-emoji"></div>
+        <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--t);margin-bottom:8px" id="quiz-perfil"></div>
+        <div style="font-size:14px;color:var(--t2);line-height:1.65;max-width:480px;margin:0 auto 20px" id="quiz-desc"></div>
+        <div style="background:var(--gl);border-radius:12px;padding:16px;text-align:left;margin-bottom:16px" id="quiz-rec"></div>
+        <button onclick="resetQuiz()" style="padding:10px 24px;background:var(--g);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Repetir quiz</button>
+      </div>
+    </div>
+
+    <!-- LÍNEA DE TIEMPO FINANCIERA -->
+    <div class="edu-section-h"><h2>Tu hoja de ruta financiera por edad</h2><p>Qué hacer con tu dinero en cada etapa de tu vida</p></div>
+    <div style="position:relative;margin-bottom:40px">
+      <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--b);transform:translateX(-50%);display:none" class="timeline-line"></div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px" id="timeline-grid"></div>
+    </div>
+
+    <!-- CALCULADORA DE INFLACIÓN -->
+    <div class="edu-section-h"><h2>Calculadora de inflación</h2><p>¿Cuánto valdrá tu dinero en el futuro?</p></div>
+    <div class="calc-card" style="margin-bottom:40px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+        <div class="calc-row"><label>Cantidad actual (MXN)</label><input id="inf-monto" type="number" value="100000" oninput="calcInflacion()"></div>
+        <div class="calc-row"><label>Tasa de inflación anual (%)</label><input id="inf-tasa" type="number" value="4.5" step="0.1" oninput="calcInflacion()"></div>
+        <div class="calc-row"><label>Años</label><input id="inf-años" type="number" value="10" min="1" max="50" oninput="calcInflacion()"></div>
+      </div>
+      <div id="inf-result" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
+        <div style="background:var(--gl);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:var(--gm);margin-bottom:4px">Valor real en el futuro</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--gm)" id="inf-valor">-</div>
+        </div>
+        <div style="background:#FCEBEB;border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:#A32D2D;margin-bottom:4px">Poder adquisitivo perdido</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:#A32D2D" id="inf-perdida">-</div>
+        </div>
+        <div style="background:#E6F1FB;border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:11px;color:#185FA5;margin-bottom:4px">Necesitas ganar al año</div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:#185FA5" id="inf-necesitas">-</div>
+        </div>
+      </div>
+      <div id="inf-mensaje" style="margin-top:12px;font-size:13px;color:var(--t2);line-height:1.6"></div>
+    </div>
+
+    <!-- GLOSARIO -->
+    <div class="edu-section-h"><h2>Glosario financiero</h2><p>Los términos que todo mexicano debe conocer, explicados simple</p></div>
+    <div style="margin-bottom:40px">
+      <div style="position:relative;margin-bottom:16px">
+        <input id="glosario-search" type="text" placeholder="Busca un término... ej: CAT, TIIE, ETF, AFORE"
+          oninput="filterGlosario(this.value)"
+          style="width:100%;padding:12px 16px 12px 40px;border:1px solid var(--b2);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;background:var(--sur);color:var(--t);outline:none">
+        <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3)">🔍</div>
+      </div>
+      <div id="glosario-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
+    </div>
+
     <div class="edu-section-h"><h2>Tips financieros rápidos</h2><p>Reglas de oro que todo mexicano debería conocer</p></div>
     <div class="tips-grid">
       <div class="tip-card"><div class="tip-emoji">💡</div><div><div class="tip-title">Regla del 50/30/20</div><div class="tip-text">50% necesidades, 30% gustos, 20% ahorro e inversión. Si no puedes ahorrar el 20%, empieza con el 5% y aumenta cada mes.</div></div></div>
@@ -976,18 +1080,25 @@ renderBiz(bizs);
 function setEduCat(el, cat) {
   document.querySelectorAll('.edu-cat').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
+  document.querySelectorAll('.guide-card').forEach(card => {
+    if (cat === 'todos' || card.dataset.cat === cat) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
 }
 
 const guides = [
-  {icon:'💰',bg:'#E1F5EE',lv:'lv-beg',lvl:'Principiante',title:'Cómo invertir en CETES desde $100',desc:'Todo lo que necesitas para empezar en los instrumentos más seguros de México.',id:'cetes'},
-  {icon:'📋',bg:'#E6F1FB',lv:'lv-beg',lvl:'Principiante',title:'Presupuesto personal con la regla 50/30/20',desc:'La forma más simple y efectiva de organizar tus finanzas personales.',id:'presupuesto'},
-  {icon:'📊',bg:'#FAEEDA',lv:'lv-mid',lvl:'Intermedio',title:'ETFs en México: la guía completa',desc:'Qué son, cómo comprarlos desde México y cómo pagar impuestos.',id:'etfs'},
-  {icon:'💳',bg:'#FCEBEB',lv:'lv-beg',lvl:'Principiante',title:'Cómo salir de deudas paso a paso',desc:'Estrategias probadas para liquidar tarjetas y préstamos sin desesperarte.',id:'deudas'},
-  {icon:'🏢',bg:'#EEEDFE',lv:'lv-mid',lvl:'Intermedio',title:'FIBRAs: bienes raíces desde $500 pesos',desc:'Cómo ser dueño de centros comerciales y bodegas sin comprar un inmueble.',id:'fibras'},
-  {icon:'🏖️',bg:'#E1F5EE',lv:'lv-beg',lvl:'Principiante',title:'Afore: todo lo que nadie te explicó',desc:'Cómo revisar tu saldo, cambiar de afore y maximizar tu pensión.',id:'afore'},
-  {icon:'₿',bg:'#FAEEDA',lv:'lv-mid',lvl:'Intermedio',title:'Crypto en México: comprar y pagar impuestos',desc:'Bitcoin, Ethereum y tus obligaciones con el SAT explicadas.',id:'crypto'},
-  {icon:'🏭',bg:'#E6F1FB',lv:'lv-mid',lvl:'Empresas',title:'Finanzas para PyMEs: lo esencial',desc:'Flujo de caja, crédito y crecimiento para dueños de negocio.',id:'empresa'},
-  {icon:'🧾',bg:'#FCEBEB',lv:'lv-adv',lvl:'Avanzado',title:'SAT: deduce más y paga menos impuestos',desc:'Deducciones personales, CFDI y declaración anual para personas físicas.',id:'sat'},
+  {icon:'💰',bg:'#E1F5EE',lv:'lv-beg',lvl:'Principiante',title:'Cómo invertir en CETES desde $100',desc:'Todo lo que necesitas para empezar en los instrumentos más seguros de México.',id:'cetes',cat:'inversion'},
+  {icon:'📋',bg:'#E6F1FB',lv:'lv-beg',lvl:'Principiante',title:'Presupuesto personal con la regla 50/30/20',desc:'La forma más simple y efectiva de organizar tus finanzas personales.',id:'presupuesto',cat:'personal'},
+  {icon:'📊',bg:'#FAEEDA',lv:'lv-mid',lvl:'Intermedio',title:'ETFs en México: la guía completa',desc:'Qué son, cómo comprarlos desde México y cómo pagar impuestos.',id:'etfs',cat:'inversion'},
+  {icon:'💳',bg:'#FCEBEB',lv:'lv-beg',lvl:'Principiante',title:'Cómo salir de deudas paso a paso',desc:'Estrategias probadas para liquidar tarjetas y préstamos sin desesperarte.',id:'deudas',cat:'personal'},
+  {icon:'🏢',bg:'#EEEDFE',lv:'lv-mid',lvl:'Intermedio',title:'FIBRAs: bienes raíces desde $500 pesos',desc:'Cómo ser dueño de centros comerciales y bodegas sin comprar un inmueble.',id:'fibras',cat:'inversion'},
+  {icon:'🏖️',bg:'#E1F5EE',lv:'lv-beg',lvl:'Principiante',title:'Afore: todo lo que nadie te explicó',desc:'Cómo revisar tu saldo, cambiar de afore y maximizar tu pensión.',id:'afore',cat:'personal'},
+  {icon:'₿',bg:'#FAEEDA',lv:'lv-mid',lvl:'Intermedio',title:'Crypto en México: comprar y pagar impuestos',desc:'Bitcoin, Ethereum y tus obligaciones con el SAT explicadas.',id:'crypto',cat:'crypto'},
+  {icon:'🏭',bg:'#E6F1FB',lv:'lv-mid',lvl:'Empresas',title:'Finanzas para PyMEs: lo esencial',desc:'Flujo de caja, crédito y crecimiento para dueños de negocio.',id:'empresa',cat:'empresa'},
+  {icon:'🧾',bg:'#FCEBEB',lv:'lv-adv',lvl:'Avanzado',title:'SAT: deduce más y paga menos impuestos',desc:'Deducciones personales, CFDI y declaración anual para personas físicas.',id:'sat',cat:'personal'},
 ];
 
 const guideContent = {
@@ -1003,7 +1114,7 @@ const guideContent = {
 };
 
 document.getElementById('guides-grid').innerHTML = guides.map(g => `
-  <div class="guide-card" onclick="openGuide('${g.id}')">
+  <div class="guide-card" data-cat="${g.cat}" onclick="openGuide('${g.id}')">
     <div class="guide-icon" style="background:${g.bg}">${g.icon}</div>
     <span class="guide-lv ${g.lv}">${g.lvl}</span>
     <div class="guide-title">${g.title}</div>
@@ -1054,6 +1165,156 @@ function updateFloatingWidget(recent) {
     </div>`;
   }).join('');
 }
+      <div style="font-size:10px;color:rgba(255,255,255,.3)">${timeAgo(f)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── SIMULADOR DE DEUDA ──
+function simDeuda() {
+  const deuda = parseFloat(document.getElementById('td-deuda').value) || 0;
+  const cat = parseFloat(document.getElementById('td-cat').value) / 100 || 0;
+  const pago = parseFloat(document.getElementById('td-pago').value) || 0;
+  const tasaMensual = cat / 12;
+  if (pago <= deuda * tasaMensual) {
+    document.getElementById('td-meses').textContent = '∞';
+    document.getElementById('td-total').textContent = '∞';
+    document.getElementById('td-intereses').textContent = '∞';
+    document.getElementById('td-multiplo').textContent = '∞';
+    const alerta = document.getElementById('td-alerta');
+    alerta.style.display = 'block';
+    alerta.textContent = '⚠️ Tu pago mensual no alcanza a cubrir los intereses. La deuda crecerá indefinidamente. Necesitas pagar al menos $' + Math.ceil(deuda * tasaMensual + 1).toLocaleString('es-MX') + ' al mes.';
+    return;
+  }
+  let saldo = deuda, meses = 0, totalPagado = 0;
+  while (saldo > 0 && meses < 600) {
+    const interes = saldo * tasaMensual;
+    saldo = saldo + interes - pago;
+    totalPagado += pago;
+    meses++;
+    if (saldo < 0) { totalPagado += saldo; saldo = 0; }
+  }
+  const intereses = totalPagado - deuda;
+  document.getElementById('td-meses').textContent = meses > 12 ? Math.floor(meses/12) + 'a ' + (meses%12) + 'm' : meses + ' meses';
+  document.getElementById('td-total').textContent = '$' + Math.round(totalPagado).toLocaleString('es-MX');
+  document.getElementById('td-intereses').textContent = '$' + Math.round(intereses).toLocaleString('es-MX');
+  document.getElementById('td-multiplo').textContent = (totalPagado/deuda).toFixed(1) + 'x';
+  const alerta = document.getElementById('td-alerta');
+  if (intereses > deuda) { alerta.style.display = 'block'; alerta.textContent = `🔥 Pagarás $${Math.round(intereses).toLocaleString('es-MX')} SOLO en intereses — más de lo que debías originalmente.`; }
+  else { alerta.style.display = 'none'; }
+}
+setTimeout(simDeuda, 400);
+
+// ── COMPARADOR DE INSTRUMENTOS ──
+const instrumentos = [
+  {nombre:'CETES 28d',rendimiento:'11.2%',riesgo:'Muy bajo',riesgoN:'bajo',liquidez:'Alta (28 días)',minimo:'$100',ideal:'Ahorro corto plazo',color:'#1D9E75'},
+  {nombre:'Cuenta de ahorro',rendimiento:'3-6%',riesgo:'Muy bajo',riesgoN:'bajo',liquidez:'Inmediata',minimo:'$0',ideal:'Fondo de emergencia',color:'#185FA5'},
+  {nombre:'Fondos de deuda',rendimiento:'8-10%',riesgo:'Bajo',riesgoN:'bajo',liquidez:'1-3 días',minimo:'$1,000',ideal:'Ahorro mediano plazo',color:'#185FA5'},
+  {nombre:'ETFs (S&P 500, IPC)',rendimiento:'10-15%',riesgo:'Medio',riesgoN:'medio',liquidez:'Alta',minimo:'$500',ideal:'Inversión largo plazo',color:'#854F0B'},
+  {nombre:'FIBRAs',rendimiento:'6-10%',riesgo:'Medio',riesgoN:'medio',liquidez:'Alta',minimo:'$500',ideal:'Renta pasiva',color:'#534AB7'},
+  {nombre:'Acciones individuales',rendimiento:'Variable',riesgo:'Alto',riesgoN:'alto',liquidez:'Alta',minimo:'$1,000',ideal:'Inversores con exp.',color:'#A32D2D'},
+  {nombre:'Crypto (BTC/ETH)',rendimiento:'Variable',riesgo:'Muy alto',riesgoN:'alto',liquidez:'Inmediata',minimo:'$100',ideal:'Portafolio agresivo',color:'#854F0B'},
+  {nombre:'Afore voluntario',rendimiento:'8-11%',riesgo:'Bajo-medio',riesgoN:'medio',liquidez:'Baja (retiro)',minimo:'$100',ideal:'Retiro + deducción',color:'#1D9E75'},
+];
+function renderInstr(list) {
+  document.getElementById('instr-tbody').innerHTML = list.map((r,i) => `
+    <tr style="border-top:0.5px solid var(--b);${i%2===0?'':'background:var(--bg)'}">
+      <td style="padding:11px 16px;font-weight:600;color:var(--t)"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r.color};margin-right:8px"></span>${r.nombre}</td>
+      <td style="padding:11px 16px;text-align:center;font-weight:700;color:${r.color}">${r.rendimiento}</td>
+      <td style="padding:11px 16px;text-align:center"><span style="padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;background:${r.riesgoN==='bajo'?'#E1F5EE':r.riesgoN==='medio'?'#FAEEDA':'#FCEBEB'};color:${r.riesgoN==='bajo'?'#085041':r.riesgoN==='medio'?'#633806':'#791F1F'}">${r.riesgo}</span></td>
+      <td style="padding:11px 16px;text-align:center;font-size:12px;color:var(--t2)">${r.liquidez}</td>
+      <td style="padding:11px 16px;text-align:center;font-weight:600;color:var(--t)">${r.minimo}</td>
+      <td style="padding:11px 16px;font-size:12px;color:var(--t3)">${r.ideal}</td>
+    </tr>`).join('');
+}
+renderInstr(instrumentos);
+function filterInstr(el, nivel) {
+  el.closest('div').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderInstr(nivel==='todos' ? instrumentos : instrumentos.filter(i => i.riesgoN===nivel));
+}
+
+// ── QUIZ ──
+const quizPreguntas = [
+  {q:'¿Cuánto tiempo planeas mantener tu inversión?',ops:['Menos de 1 año','1 a 3 años','3 a 5 años','Más de 5 años'],pts:[0,1,2,3]},
+  {q:'Si tu inversión baja 20% en un mes, ¿qué harías?',ops:['Vendo todo inmediatamente','Vendo una parte','Espero a que se recupere','Compro más aprovechando el precio'],pts:[0,1,2,3]},
+  {q:'¿Cuál es tu objetivo principal?',ops:['Proteger mi dinero de la inflación','Obtener ingresos estables','Crecer mi patrimonio a largo plazo','Maximizar ganancias asumiendo riesgos'],pts:[0,1,2,3]},
+  {q:'¿Cuánta experiencia tienes invirtiendo?',ops:['Ninguna, soy principiante','Tengo CETES o fondos básicos','Tengo ETFs o acciones','Portafolio diversificado activo'],pts:[0,1,2,3]},
+  {q:'¿Cuál es tu situación financiera?',ops:['Sin ahorros, vivo al día','Tengo fondo de emergencia básico','Tengo fondo de emergencia y algo extra','Ingresos estables y múltiples ahorros'],pts:[0,1,2,3]},
+  {q:'¿Cómo reaccionas emocionalmente ante pérdidas?',ops:['Me estresa mucho, no puedo dormir','Me preocupa pero lo manejo','Lo acepto como parte de invertir','Lo veo como oportunidad de compra'],pts:[0,1,2,3]},
+];
+let quizIdx=0, quizPts=0;
+function renderQuizQ() {
+  const q=quizPreguntas[quizIdx];
+  document.getElementById('quiz-q-label').textContent=`Pregunta ${quizIdx+1} de ${quizPreguntas.length}`;
+  document.getElementById('quiz-bar').style.width=`${(quizIdx/quizPreguntas.length)*100}%`;
+  document.getElementById('quiz-question').textContent=q.q;
+  document.getElementById('quiz-options').innerHTML=q.ops.map((op,i)=>`<button onclick="answerQuiz(${q.pts[i]})" style="text-align:left;padding:12px 16px;border:1px solid var(--b2);border-radius:9px;background:var(--sur);color:var(--t);font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='var(--g)';this.style.background='var(--gl)'" onmouseout="this.style.borderColor='var(--b2)';this.style.background='var(--sur)'">${op}</button>`).join('');
+}
+function answerQuiz(pts) {
+  quizPts+=pts; quizIdx++;
+  if(quizIdx<quizPreguntas.length){renderQuizQ();return;}
+  document.getElementById('quiz-container').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+  const pct=quizPts/(quizPreguntas.length*3);
+  let perfil,emoji,desc,rec;
+  if(pct<0.33){perfil='Conservador';emoji='🐢';desc='Priorizas la seguridad sobre el rendimiento. Tu foco es proteger tu capital con rendimientos estables.';rec='<strong>Portafolio:</strong> 50% CETES · 25% Fondos de deuda · 15% ETFs · 10% Oro. Rendimiento: 8-10% anual.';}
+  else if(pct<0.66){perfil='Moderado';emoji='⚖️';desc='Buscas equilibrio entre seguridad y crecimiento. Puedes tolerar cierta volatilidad a largo plazo.';rec='<strong>Portafolio:</strong> 35% ETFs globales · 30% CETES · 20% Acciones BMV · 15% FIBRAs. Rendimiento: 12-15% anual.';}
+  else{perfil='Agresivo';emoji='🚀';desc='Buscas maximizar el rendimiento y puedes tolerar alta volatilidad. Tienes horizonte largo y experiencia.';rec='<strong>Portafolio:</strong> 40% ETFs tecnología · 25% Acciones · 20% Crypto · 15% CETES. Rendimiento: 20%+ anual.';}
+  document.getElementById('quiz-emoji').textContent=emoji;
+  document.getElementById('quiz-perfil').textContent=`Tu perfil: ${perfil}`;
+  document.getElementById('quiz-desc').textContent=desc;
+  document.getElementById('quiz-rec').innerHTML=rec;
+}
+function resetQuiz(){quizIdx=0;quizPts=0;document.getElementById('quiz-container').style.display='block';document.getElementById('quiz-result').style.display='none';renderQuizQ();}
+renderQuizQ();
+
+// ── LÍNEA DE TIEMPO ──
+const timeline=[
+  {edad:'20-29 años',icon:'🎓',color:'#E1F5EE',accent:'#1D9E75',pasos:['Construye tu fondo de emergencia (3-6 meses de gastos)','Empieza en CETES — aunque sea $500/mes','Abre tu Afore y haz aportaciones voluntarias','Evita deudas de tarjeta de crédito a toda costa','Invierte en educación financiera y habilidades']},
+  {edad:'30-39 años',icon:'💼',color:'#E6F1FB',accent:'#185FA5',pasos:['Diversifica: ETFs internacionales + acciones BMV','Considera comprar casa si tus finanzas lo permiten','Optimiza tu AFORE — elige la de mejor rendimiento','Contrata seguro de gastos médicos mayores','Meta: 1x tu salario anual ahorrado para los 35']},
+  {edad:'40-49 años',icon:'📈',color:'#FAEEDA',accent:'#854F0B',pasos:['Aumenta aportaciones al retiro — el tiempo apremia','Reduce deudas: hipoteca y créditos pendientes','Diversifica en FIBRAs para renta pasiva','Revisa tu seguro de vida y beneficiarios','Meta: 3x tu salario anual ahorrado para los 45']},
+  {edad:'50+ años',icon:'🏖️',color:'#EEEDFE',accent:'#534AB7',pasos:['Mueve gradualmente a instrumentos más conservadores','Planifica legalmente tu herencia y testamento','Calcula exactamente cuánto necesitas para retirarte','Considera fuentes de ingreso pasivo adicionales','Meta: 10x tu salario anual ahorrado al retiro']},
+];
+document.getElementById('timeline-grid').innerHTML=timeline.map(t=>`<div style="background:var(--sur);border:0.5px solid var(--b);border-radius:14px;overflow:hidden"><div style="background:${t.color};padding:16px 20px;display:flex;align-items:center;gap:10px"><div style="font-size:28px">${t.icon}</div><div style="font-size:16px;font-weight:700;color:${t.accent}">${t.edad}</div></div><div style="padding:16px 20px">${t.pasos.map(p=>`<div style="display:flex;gap:8px;margin-bottom:8px;font-size:13px;color:var(--t2);line-height:1.4"><span style="color:${t.accent};font-weight:700;flex-shrink:0">✓</span>${p}</div>`).join('')}</div></div>`).join('');
+
+// ── CALCULADORA INFLACIÓN ──
+function calcInflacion() {
+  const monto=parseFloat(document.getElementById('inf-monto').value)||0;
+  const tasa=parseFloat(document.getElementById('inf-tasa').value)/100||0;
+  const años=parseInt(document.getElementById('inf-años').value)||0;
+  const valorReal=monto/Math.pow(1+tasa,años);
+  const perdida=monto-valorReal;
+  document.getElementById('inf-valor').textContent='$'+Math.round(valorReal).toLocaleString('es-MX');
+  document.getElementById('inf-perdida').textContent='$'+Math.round(perdida).toLocaleString('es-MX');
+  document.getElementById('inf-necesitas').textContent=(tasa*100).toFixed(1)+'% anual';
+  document.getElementById('inf-mensaje').innerHTML=`Con una inflación del <strong>${(tasa*100).toFixed(1)}%</strong> anual, tus <strong>$${monto.toLocaleString('es-MX')}</strong> de hoy solo valdrán <strong>$${Math.round(valorReal).toLocaleString('es-MX')}</strong> en ${años} años. Para mantener el mismo poder de compra necesitas crecer al menos <strong>${(tasa*100).toFixed(1)}%</strong> anual — lo que actualmente pagan los CETES.`;
+}
+setTimeout(calcInflacion,300);
+
+// ── GLOSARIO ──
+const glosario=[
+  {term:'CAT',def:'Costo Anual Total. El verdadero costo de un crédito incluyendo tasas, comisiones y seguros. Siempre compara el CAT, no solo la tasa.'},
+  {term:'TIIE',def:'Tasa de Interés Interbancaria de Equilibrio. La tasa de referencia en México. Muchos créditos se calculan como "TIIE + X puntos".'},
+  {term:'CETES',def:'Certificados de la Tesorería de la Federación. Deuda del gobierno mexicano, el instrumento más seguro para invertir en México.'},
+  {term:'AFORE',def:'Administradora de Fondos para el Retiro. Administra tu dinero de pensión. Cada trabajador tiene una asignada automáticamente.'},
+  {term:'FIBRA',def:'Fideicomiso de Inversión en Bienes Raíces. Permite invertir en propiedades comerciales desde la bolsa como si fuera una acción.'},
+  {term:'ETF',def:'Exchange Traded Fund. Fondo que replica un índice bursátil y cotiza en bolsa. La forma más eficiente de diversificar.'},
+  {term:'IPC',def:'Índice de Precios y Cotizaciones. El principal índice de la Bolsa Mexicana de Valores, las 35 empresas más importantes de México.'},
+  {term:'SAT',def:'Servicio de Administración Tributaria. La autoridad fiscal de México. Es obligatorio declarar ganancias de inversión.'},
+  {term:'BMV',def:'Bolsa Mexicana de Valores. El mercado donde se compran y venden acciones, ETFs, FIBRAs y otros instrumentos en México.'},
+  {term:'Plusvalía',def:'Aumento en el valor de un activo con el tiempo. La ganancia que obtienes al vender algo más caro de lo que compraste.'},
+  {term:'Liquidez',def:'Qué tan rápido puedes convertir una inversión en efectivo sin perder valor. El efectivo tiene liquidez perfecta.'},
+  {term:'Diversificación',def:'No poner todos los huevos en la misma canasta. Distribuir inversiones en diferentes activos para reducir el riesgo total.'},
+  {term:'Rendimiento neto',def:'La ganancia real después de descontar impuestos, comisiones e inflación. El número que realmente importa.'},
+  {term:'Interés compuesto',def:'Ganar intereses sobre los intereses previamente generados. La base de la riqueza a largo plazo — empieza hoy.'},
+  {term:'Aversión al riesgo',def:'Qué tanto puedes tolerar pérdidas en tus inversiones. Alta aversión = instrumentos seguros con menor rendimiento.'},
+  {term:'Portafolio',def:'El conjunto total de todas tus inversiones. Un portafolio bien construido equilibra riesgo y rendimiento.'},
+];
+function renderGlosario(list){document.getElementById('glosario-grid').innerHTML=list.map(g=>`<div style="background:var(--sur);border:0.5px solid var(--b);border-radius:10px;padding:14px 16px"><div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:4px">${g.term}</div><div style="font-size:12px;color:var(--t2);line-height:1.55">${g.def}</div></div>`).join('');}
+renderGlosario(glosario);
+function filterGlosario(q){renderGlosario(q?glosario.filter(g=>g.term.toLowerCase().includes(q.toLowerCase())||g.def.toLowerCase().includes(q.toLowerCase())):glosario);}
+
 function calcCetes() {
   const cap = parseFloat(document.getElementById('c-capital').value)||0;
   const tasa = parseFloat(document.getElementById('c-tasa').value)/100||0;
