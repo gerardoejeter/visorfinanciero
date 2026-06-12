@@ -191,6 +191,10 @@ nav{background:var(--gd);position:sticky;top:0;z-index:100;border-bottom:1px sol
 .calc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:40px}
 .calc-card{background:var(--sur);border:0.5px solid var(--b);border-radius:16px;padding:24px}
 .calc-card-title{font-size:15px;font-weight:700;color:var(--t);margin-bottom:4px}
+.calc-help{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--b2);color:var(--t3);font-size:11px;font-weight:700;cursor:pointer;margin-left:6px;position:relative;vertical-align:middle;flex-shrink:0}
+.calc-help:hover .calc-tooltip{display:block}
+.calc-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;font-size:11px;font-weight:400;line-height:1.5;padding:10px 14px;border-radius:8px;width:220px;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.2);pointer-events:none}
+.calc-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1a1a18}
 .calc-card-sub{font-size:12px;color:var(--t3);margin-bottom:20px}
 .calc-row{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .calc-row label{font-size:12px;font-weight:500;color:var(--t2)}
@@ -508,7 +512,7 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
     <div class="edu-section-h"><h2>Calculadoras financieras</h2><p>Herramientas prácticas con números reales</p></div>
     <div class="calc-grid">
       <div class="calc-card">
-        <div class="calc-card-title">Calculadora CETES</div>
+        <div class="calc-card-title">Calculadora CETES <span class="calc-help">?<div class="calc-tooltip">Ingresa cuánto quieres invertir, la tasa actual y el plazo. Te mostrará tu ganancia neta ya descontado el ISR. La tasa actual de CETES es ~11.2% anual.</div></span></div>
         <div class="calc-card-sub">¿Cuánto ganarías invirtiendo en CETES?</div>
         <div class="calc-row"><label>Capital inicial (MXN)</label><input id="c-capital" type="number" value="10000"></div>
         <div class="calc-row"><label>Tasa anual (%)</label><input id="c-tasa" type="number" value="11.2" step="0.1"></div>
@@ -517,7 +521,7 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
         <div class="calc-result" id="r-cetes"><div class="calc-result-num" id="r-cetes-num"></div><div class="calc-result-label">Ganancia neta estimada</div><div class="calc-result-detail" id="r-cetes-detail"></div></div>
       </div>
       <div class="calc-card">
-        <div class="calc-card-title">Interés compuesto</div>
+        <div class="calc-card-title">Interés compuesto <span class="calc-help">?<div class="calc-tooltip">Ingresa tu capital inicial, cuánto ahorras cada mes y el rendimiento esperado. Te muestra cuánto tendrás en X años reinvirtiendo todo.</div></span></div>
         <div class="calc-card-sub">El poder de reinvertir tus ganancias año tras año</div>
         <div class="calc-row"><label>Capital inicial (MXN)</label><input id="ic-capital" type="number" value="50000"></div>
         <div class="calc-row"><label>Aportación mensual (MXN)</label><input id="ic-aporte" type="number" value="2000"></div>
@@ -527,7 +531,7 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
         <div class="calc-result" id="r-ic"><div class="calc-result-num" id="r-ic-num"></div><div class="calc-result-label">Patrimonio final estimado</div><div class="calc-result-detail" id="r-ic-detail"></div></div>
       </div>
       <div class="calc-card">
-        <div class="calc-card-title">Fondo de emergencia</div>
+        <div class="calc-card-title">Fondo de emergencia <span class="calc-help">?<div class="calc-tooltip">Calcula cuánto dinero necesitas tener guardado para cubrir 3, 6 o 12 meses de gastos sin trabajar. El mínimo recomendado es 6 meses.</div></span></div>
         <div class="calc-card-sub">¿Cuánto necesitas ahorrar para estar protegido?</div>
         <div class="calc-row"><label>Gasto mensual total (MXN)</label><input id="fe-gasto" type="number" value="15000"></div>
         <div class="calc-row"><label>Meses de cobertura</label><select id="fe-meses"><option value="3">3 meses (mínimo)</option><option value="6" selected>6 meses (recomendado)</option><option value="12">12 meses</option></select></div>
@@ -536,7 +540,7 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
         <div class="calc-result" id="r-fe"><div class="calc-result-num" id="r-fe-num"></div><div class="calc-result-label">Meta de fondo de emergencia</div><div class="calc-result-detail" id="r-fe-detail"></div></div>
       </div>
       <div class="calc-card">
-        <div class="calc-card-title">Calculadora de retiro</div>
+        <div class="calc-card-title">Calculadora de retiro <span class="calc-help">?<div class="calc-tooltip">Calcula cuánto necesitas ahorrar para jubilarte. Ingresa tu edad, edad de retiro deseada, gastos mensuales y tu saldo actual en Afore.</div></span></div>
         <div class="calc-card-sub">¿Cuánto necesitas para jubilarte tranquilo?</div>
         <div class="calc-row"><label>Tu edad actual</label><input id="ret-edad" type="number" value="30"></div>
         <div class="calc-row"><label>Edad de retiro deseada</label><input id="ret-meta" type="number" value="65"></div>
@@ -586,7 +590,7 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
     <div class="guides-grid" id="guides-grid"></div>
 
     <!-- SIMULADOR DE DEUDA -->
-    <div class="edu-section-h"><h2>Simulador de deuda con tarjeta</h2><p>Descubre cuánto pagarás realmente si solo cubres el mínimo</p></div>
+    <div class="edu-section-h"><h2>Simulador de deuda con tarjeta <span class="calc-help" style="font-size:13px;width:20px;height:20px">?<div class="calc-tooltip">Ingresa tu deuda total, el CAT de tu tarjeta (búscalo en tu estado de cuenta) y tu pago mensual. Verás cuánto pagarás realmente en total.</div></span></h2><p>Descubre cuánto pagarás realmente si solo cubres el mínimo</p></div>
     <div class="calc-card" style="margin-bottom:40px">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
         <div class="calc-row"><label>Deuda actual (MXN)</label><input id="td-deuda" type="number" value="20000" oninput="simDeuda()"></div>
@@ -653,7 +657,7 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
     </div>
 
     <!-- CALCULADORA DE INFLACIÓN -->
-    <div class="edu-section-h"><h2>Calculadora de inflación</h2><p>¿Cuánto valdrá tu dinero en el futuro?</p></div>
+    <div class="edu-section-h"><h2>Calculadora de inflación <span class="calc-help" style="font-size:13px;width:20px;height:20px">?<div class="calc-tooltip">Ingresa una cantidad, la inflación anual esperada (México promedia 4-5%) y los años. Te muestra cuánto valdrá ese dinero en términos reales.</div></span></h2><p>¿Cuánto valdrá tu dinero en el futuro?</p></div>
     <div class="calc-card" style="margin-bottom:40px">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
         <div class="calc-row"><label>Cantidad actual (MXN)</label><input id="inf-monto" type="number" value="100000" oninput="calcInflacion()"></div>
