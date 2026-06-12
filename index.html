@@ -432,12 +432,6 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
           <button class="btn-ghost" onclick="showPage('educacion')">Educación financiera</button>
         </div>
       </div>
-      <div class="split-footer">
-        <div class="split-stat"><div class="split-stat-n" id="stat-1">0k</div><div class="split-stat-l">Lectores</div></div>
-        <div class="split-stat"><div class="split-stat-n" id="stat-2">0</div><div class="split-stat-l">Artículos</div></div>
-        <div class="split-stat"><div class="split-stat-n">3/día</div><div class="split-stat-l">Publicaciones</div></div>
-        <div class="split-stat"><div class="split-stat-n">7/7</div><div class="split-stat-l">Días activo</div></div>
-      </div>
     </div>
 
     <div class="split-right">
@@ -936,7 +930,6 @@ function countUp(id, target, suffix, dur) {
     if (p < 1) requestAnimationFrame(tick);
   })();
 }
-setTimeout(() => { countUp('stat-1',18,'k',1400); countUp('stat-2',142,'',1700); }, 400);
 
 // ── LOAD NEWS FROM SHEETS ──
 async function loadNews() {
