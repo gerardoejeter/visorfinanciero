@@ -992,7 +992,7 @@ async function loadNews() {
       const id = `art_${idx}`;
       dynArts[id] = { title, meta: `${tag} · ${readTime(body)} de lectura · ${timeAgo(date)}`, body: body ? `<p>${body.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>` : '' };
 
-      if (i === 2) html += `<div class="ad-card" onclick="openBiz('galpon')"><div class="ad-label">Patrocinado</div><div class="ad-icon">📦</div><div class="ad-name">Galpon Empaques</div><div class="ad-desc">Soluciones de empaque y embalaje para empresas. Romita, Guanajuato.</div><div class="ad-tag">Empaques · Guanajuato</div><div class="ad-cta">Ver perfil →</div></div>`;
+      if (i === 2) html += `<div class="ad-card" onclick="openBiz('galpon')"><div class="ad-label">Patrocinado</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div class="ad-icon">📦</div><div class="ad-name" style="font-size:15px;font-weight:800;color:var(--gd)">Galpon Empaques S.A. de C.V.</div></div><div class="ad-desc">Soluciones de empaque y embalaje para empresas. Romita, Guanajuato.</div><div class="ad-tag">Empaques · Guanajuato</div><div class="ad-cta">Ver perfil →</div></div>`;
 
       html += `<div class="news-card" onclick="openDyn('${id}')"><div class="news-card-accent" style="background:${accent}"></div><div class="news-card-body"><span class="news-card-tag ${tagCls}">${tag}</span><h3 class="news-card-title">${title}</h3><p class="news-card-excerpt">${intro}</p><div class="news-card-footer"><span>${timeAgo(date)} · ${readTime(body)}</span><span class="news-card-read">Leer →</span></div></div></div>`;
       idx++;
@@ -1027,8 +1027,8 @@ function renderBiz(list) {
         <div class="biz-desc">${b.desc}</div>
         <div class="biz-tags">${b.tags.map(t=>`<span class="biz-tag">${t}</span>`).join('')}</div>
         <div class="biz-footer">
-          <a href="tel:${b.ph.replace(/\s/g,'')}" class="biz-btn-call" onclick="event.stopPropagation()">📞 Llamar</a>
-          <a href="mailto:${b.email}" class="biz-btn-mail" onclick="event.stopPropagation()">✉️ Correo</a>
+          <a href="tel:${b.ph.replace(/\s/g,'')}" class="biz-btn-call" onclick="event.stopPropagation()">📞 ${b.ph}</a>
+          <a href="mailto:${b.email}" class="biz-btn-mail" onclick="event.stopPropagation()" style="font-size:11px">✉️ ${b.email}</a>
         </div>
       </div>
     </div>`).join('');
@@ -1165,9 +1165,9 @@ function renderSplitTips() {
   if (!c || !d) return;
   const tip = allTips[tipIdx];
   c.innerHTML = `<div style="animation:fadeUp .35s ease both">
-    <div style="display:flex;gap:12px;padding:12px;background:var(--gl);border-radius:10px;margin-bottom:8px">
+    <div style="display:flex;gap:12px;padding:12px;background:#f0faf5;border:0.5px solid #c8e6d8;border-radius:10px;margin-bottom:8px">
       <div style="font-size:22px;flex-shrink:0">${tip.e}</div>
-      <div><div style="font-size:12px;font-weight:700;color:var(--gm);margin-bottom:4px">${tip.t}</div><div style="font-size:12px;color:var(--gm);line-height:1.5;opacity:.8">${tip.d}</div></div>
+      <div><div style="font-size:12px;font-weight:700;color:#085041;margin-bottom:4px">${tip.t}</div><div style="font-size:12px;color:#2d6a50;line-height:1.5">${tip.d}</div></div>
     </div>
     <div style="font-size:10px;color:var(--t3);text-align:right">${tipIdx+1} de ${allTips.length} tips</div>
   </div>`;
