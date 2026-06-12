@@ -2,1055 +2,875 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VisorFinanciero — Noticias financieras en profundidad</title>
-<meta name="description" content="Noticias financieras en tiempo real para México y el mundo. Mercados, educación financiera, calculadoras y directorio de negocios.">
-<meta name="theme-color" content="#1D9E75">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VisorFinanciero — Noticias financieras para México</title>
+<meta name="description" content="Noticias financieras en tiempo real, educación financiera y directorio de negocios para México.">
+<meta name="theme-color" content="#04342C">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="VisorFinanciero">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --g:#1D9E75;--gd:#085041;--gm:#0F6E56;--gl:#E1F5EE;
+  --g:#1D9E75;--gd:#04342C;--gm:#0F6E56;--gl:#E1F5EE;--g2:#9FE1CB;
   --red:#A32D2D;--rl:#FCEBEB;--blue:#185FA5;--bl:#E6F1FB;
-  --amb:#854F0B;--al:#FAEEDA;--pur:#534AB7;--pl:#EEEDFE;
-  --t:#1a1a18;--t2:#5a5a56;--t3:#8a8a85;
-  --bg:#fafaf8;--sur:#fff;--b:rgba(0,0,0,.08);--b2:rgba(0,0,0,.14)
+  --t:#111110;--t2:#555550;--t3:#888880;
+  --bg:#fafaf8;--sur:#ffffff;--b:rgba(0,0,0,.08);--b2:rgba(0,0,0,.14);
+  --r:12px
 }
 @media(prefers-color-scheme:dark){:root{
-  --t:#f0f0ec;--t2:#a0a09a;--t3:#70706a;
-  --bg:#141412;--sur:#1e1e1c;--b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);
-  --gl:#04342C;--rl:#501313;--bl:#042C53;--al:#412402;--pl:#26215C
+  --t:#f0f0ec;--t2:#a0a09a;--t3:#666660;
+  --bg:#111110;--sur:#1c1c1a;--b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);
+  --gl:#04342C;--rl:#501313;--bl:#042C53
 }}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
-button{font-family:'Inter',sans-serif;cursor:pointer}
-.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;background:none}
+img{display:block;max-width:100%}
 .page{display:none}.page.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+@keyframes scrollL{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* FLOATING PRICE WIDGET */
+.fpw{position:fixed;bottom:24px;right:24px;z-index:200;background:#04342C;border:1px solid rgba(29,158,117,0.3);border-radius:14px;padding:0;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.25);width:200px;transition:all .3s}
+.fpw-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
+.fpw-title{font-size:11px;font-weight:600;color:#9FE1CB;letter-spacing:.08em;display:flex;align-items:center;gap:6px}
+.fpw-dot{width:5px;height:5px;border-radius:50%;background:#1D9E75;animation:pulse 1.5s infinite}
+.fpw-toggle{font-size:10px;color:rgba(255,255,255,.3);transition:.2s}
+.fpw-body{padding:8px 0;max-height:200px;overflow:hidden;transition:max-height .3s}
+.fpw.collapsed .fpw-body{max-height:0}
+.fpw-row{display:flex;align-items:center;justify-content:space-between;padding:5px 14px;transition:background .15s}
+.fpw-row:hover{background:rgba(255,255,255,.04)}
+.fpw-sym{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.06em;width:60px}
+.fpw-val{font-size:12px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.fpw-chg{font-size:10px;font-weight:600;text-align:right;min-width:44px}
+.fpw-chg.up{color:#5DCAA5}
+.fpw-chg.dn{color:#F09595}
+.fpw-footer{padding:8px 14px;border-top:1px solid rgba(255,255,255,.06)}
+.fpw-btn{width:100%;padding:7px;background:rgba(29,158,117,0.2);border:1px solid rgba(29,158,117,0.3);border-radius:7px;font-size:11px;font-weight:600;color:#5DCAA5;cursor:pointer;transition:.2s;font-family:inherit;text-align:center}
+.fpw-btn:hover{background:rgba(29,158,117,0.35)}
 
 /* TICKER */
-.tkr{background:#085041;overflow:hidden}
-.tkr-t{display:flex;animation:tkr 35s linear infinite;width:max-content}
-.tkr-t:hover{animation-play-state:paused}
-@keyframes tkr{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ti{display:inline-flex;align-items:center;gap:6px;padding:7px 22px;font-size:12px;font-weight:500;color:rgba(255,255,255,.9);border-right:1px solid rgba(255,255,255,.12);white-space:nowrap}
-.up{color:#9FE1CB}.dn{color:#F09595}
+.ticker{background:#04342C;overflow:hidden;padding:0}
+.ticker-inner{display:inline-flex;animation:scrollL 32s linear infinite;white-space:nowrap}
+.ticker-inner:hover{animation-play-state:paused}
+.t-item{display:inline-flex;align-items:center;gap:7px;padding:8px 22px;font-size:12px;font-weight:500;color:rgba(255,255,255,.85);border-right:1px solid rgba(255,255,255,.08);white-space:nowrap}
+.t-up{color:#9FE1CB}.t-dn{color:#F09595}
 
 /* NAV */
-nav{background:var(--sur);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:100}
-.nav-in{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:var(--t);letter-spacing:-.02em;flex-shrink:0}
-.lm{width:32px;height:32px;background:#1D9E75;border-radius:8px;display:flex;align-items:center;justify-content:center}
-.nls{display:flex;align-items:center;gap:2px}
-.nl{font-size:13px;font-weight:500;color:var(--t2);padding:6px 10px;border-radius:6px;cursor:pointer;transition:color .15s,background .15s;white-space:nowrap;background:none;border:none}
-.nl:hover,.nl.active{color:var(--t);background:var(--b)}
-.nl.active{color:#1D9E75;background:transparent}
-.btn-a{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#fff;background:#1D9E75;padding:7px 14px;border-radius:8px;border:none;white-space:nowrap;transition:opacity .15s}
-.btn-a:hover{opacity:.88}
-.btn-yt{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--t2);padding:7px 10px;border-radius:8px;border:none;background:none;transition:color .15s}
-.btn-yt:hover{color:#E24B4A}
-
-/* HERO */
-.hero-sec{padding:32px 0 24px}
-.hero-grid{display:grid;grid-template-columns:1fr 380px;gap:20px}
-.hero-main{background:var(--sur);border:1px solid var(--b);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .2s}
-.hero-main:hover{border-color:var(--b2)}
-.h-img{height:260px;background:linear-gradient(150deg,#085041 0%,#1D9E75 55%,#5DCAA5 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px;position:relative;overflow:hidden}
-.h-img::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
-.h-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;margin-bottom:10px;width:fit-content}
-.h-hl{font-family:'Fraunces',serif;font-size:26px;font-weight:500;color:#fff;line-height:1.25;letter-spacing:-.02em}
-.h-body{padding:20px 24px 22px}
-.h-body p{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:14px}
-.meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t3);flex-wrap:wrap}
-.md{width:3px;height:3px;border-radius:50%;background:var(--t3)}
-.rb{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#1D9E75;margin-top:14px;cursor:pointer;transition:gap .2s;background:none;border:none;padding:0}
-.rb:hover{gap:9px}
-.side-list{display:flex;flex-direction:column;gap:12px}
-.sc{background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;transition:border-color .2s,transform .15s}
-.sc:hover{border-color:var(--b2);transform:translateX(2px)}
-.sacc{width:3px;border-radius:2px;flex-shrink:0;align-self:stretch}
-.sc h3{font-size:13px;font-weight:500;line-height:1.4;color:var(--t);margin-bottom:5px}
-.sm{font-size:11px;color:var(--t3)}
-
-/* SECTION HEADER */
-.sh{display:flex;align-items:center;gap:14px;margin:32px 0 20px}
-.sl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);white-space:nowrap}
-.sln{flex:1;height:1px;background:var(--b)}
-
-/* NEWS GRID */
-@keyframes spin{to{transform:rotate(360deg)}}
-.ng{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
-.nc{background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;cursor:pointer;transition:border-color .2s,transform .15s;display:flex;flex-direction:column}
-.nc:hover{border-color:var(--b2);transform:translateY(-2px)}
-.nt{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-bottom:10px;width:fit-content}
-.tg{background:#E1F5EE;color:#0F6E56}.tr{background:#FCEBEB;color:#A32D2D}
-.tb{background:#E6F1FB;color:#185FA5}.ta{background:#FAEEDA;color:#854F0B}.tp{background:#EEEDFE;color:#534AB7}
-.nc h3{font-family:'Fraunces',serif;font-size:15px;font-weight:500;line-height:1.35;color:var(--t);margin-bottom:8px;flex:1}
-.nc p{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:14px}
-.nf{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--t3);padding-top:12px;border-top:1px solid var(--b);margin-top:auto}
-.nr{color:#1D9E75;font-weight:500;font-size:12px;display:flex;align-items:center;gap:4px;transition:gap .2s}
-.nc:hover .nr{gap:7px}
-
-/* NATIVE ADS */
-.nad{background:var(--sur);border:1.5px solid #1D9E75;border-radius:12px;padding:18px;cursor:pointer;transition:transform .15s;display:flex;flex-direction:column;position:relative}
-.nad:hover{transform:translateY(-2px)}
-.nad.prem{border-color:#534AB7}
-.nb{position:absolute;top:12px;right:12px;font-size:10px;font-weight:600;color:#0F6E56;background:#E1F5EE;padding:2px 7px;border-radius:10px}
-.nad.prem .nb{background:#EEEDFE;color:#534AB7}
-.bl{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
-.nad h3{font-size:14px;font-weight:600;color:var(--t);margin-bottom:5px}
-.nad p{font-size:12px;color:var(--t2);line-height:1.55;margin-bottom:10px;flex:1}
-.bc{font-size:11px;color:#0F6E56;font-weight:500}
-.nad.prem .bc{color:#534AB7}
-.acta{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:#fff;background:#1D9E75;padding:7px 13px;border-radius:7px;margin-top:10px;border:none;transition:opacity .15s;width:fit-content}
-.nad.prem .acta{background:#534AB7}
-.acta:hover{opacity:.88}
-
-/* YT STRIP */
-.yts{background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:18px;margin-bottom:32px}
-.yti{width:48px;height:48px;background:#E24B4A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ytx{flex:1}
-.ytx strong{font-family:'Fraunces',serif;font-size:16px;font-weight:500;display:block;margin-bottom:3px;color:var(--t)}
-.ytx span{font-size:13px;color:var(--t2)}
-.ytb{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:#fff;background:#E24B4A;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;white-space:nowrap;transition:opacity .15s}
-.ytb:hover{opacity:.88}
-
-/* PROMO BANNER */
-.pb{background:linear-gradient(135deg,#085041,#1D9E75);border-radius:14px;padding:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:40px;flex-wrap:wrap}
-.pb h3{font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:#fff;margin-bottom:6px}
-.pb p{font-size:13px;color:rgba(255,255,255,.8);max-width:460px}
-.pbb{padding:12px 22px;background:#fff;color:#085041;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:opacity .15s}
-.pbb:hover{opacity:.9}
-
-/* DIRECTORIO */
-.dh{background:linear-gradient(135deg,#085041,#1D9E75);border-radius:16px;padding:40px 36px;margin:32px 0 28px}
-.dh h1{font-family:'Fraunces',serif;font-size:32px;font-weight:500;color:#fff;margin-bottom:10px;letter-spacing:-.02em}
-.dh p{font-size:15px;color:rgba(255,255,255,.8);max-width:540px;line-height:1.6;margin-bottom:20px}
-.ds{display:flex;gap:10px;flex-wrap:wrap}
-.ds input{flex:1;padding:11px 16px;border-radius:9px;border:none;font-size:14px;font-family:'Inter',sans-serif;outline:none;background:rgba(255,255,255,.95);color:#1a1a18;min-width:200px}
-.ds select{padding:11px 14px;border-radius:9px;border:none;font-size:13px;font-family:'Inter',sans-serif;background:rgba(255,255,255,.15);color:#fff;cursor:pointer;outline:none}
-.ds select option{color:#1a1a18;background:#fff}
-.cf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
-.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--b2);color:var(--t2);cursor:pointer;background:var(--sur);transition:all .15s}
-.chip:hover,.chip.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
-.bg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
-.bca{background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s,transform .15s;display:flex;flex-direction:column;gap:12px;position:relative}
-.bca:hover{border-color:var(--b2);transform:translateY(-2px)}
-.bca.pro{border-color:#1D9E75}.bca.prem2{border-color:#534AB7;box-shadow:0 0 0 2px rgba(83,74,183,.1)}
-.pbd{position:absolute;top:14px;right:14px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;letter-spacing:.04em}
-.bpro{background:#E1F5EE;color:#0F6E56}.bprm{background:#EEEDFE;color:#534AB7}
-.bh{display:flex;align-items:center;gap:12px}
-.bav{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.bi h3{font-size:15px;font-weight:600;color:var(--t);line-height:1.2}
-.bi .bg2{font-size:12px;color:var(--t3);margin-top:2px}
-.bd{font-size:13px;color:var(--t2);line-height:1.55}
-.btgs{display:flex;gap:6px;flex-wrap:wrap}
-.btg{font-size:11px;padding:3px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--b);color:var(--t2)}
-.bft{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--b)}
-.bct{font-size:12px;color:#1D9E75;font-weight:500}
-.bst{font-size:12px;color:var(--t3)}
-
-/* ANUNCIATE */
-.anh{padding:48px 0 36px;text-align:center}
-.anh h1{font-family:'Fraunces',serif;font-size:36px;font-weight:500;letter-spacing:-.02em;color:var(--t);margin-bottom:14px}
-.anh p{font-size:16px;color:var(--t2);max-width:560px;margin:0 auto;line-height:1.65}
-.sr{display:flex;justify-content:center;gap:40px;margin-top:28px;flex-wrap:wrap}
-.sn{font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:#1D9E75}
-.sl2{font-size:12px;color:var(--t3);margin-top:2px}
-.planes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:36px 0}
-.pc{background:var(--sur);border:1px solid var(--b);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s}
-.pc:hover{transform:translateY(-3px)}.pc.dest{border:2px solid #1D9E75}
-.pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:11px;font-weight:600;padding:4px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
-.pn{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
-.pp{font-family:'Fraunces',serif;font-size:36px;font-weight:500;color:var(--t);letter-spacing:-.02em;line-height:1}
-.pp span{font-family:'Inter',sans-serif;font-size:14px;font-weight:400;color:var(--t3)}
-.pd{font-size:13px;color:var(--t2);margin:10px 0 20px;line-height:1.5}
-.pf{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:24px;flex:1}
-.pf li{font-size:13px;color:var(--t2);display:flex;align-items:flex-start;gap:8px}
-.ck{color:#1D9E75;font-size:15px;flex-shrink:0;margin-top:1px}.cx{color:var(--t3);font-size:15px;flex-shrink:0;margin-top:1px}
-.pbtn{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s;border:none;width:100%}
-.pbtn-o{background:transparent;border:1.5px solid var(--b2);color:var(--t)}.pbtn-o:hover{border-color:#1D9E75;color:#1D9E75}
-.pbtn-g{background:#1D9E75;color:#fff}.pbtn-g:hover{opacity:.88}
-.pbtn-p{background:#534AB7;color:#fff}.pbtn-p:hover{opacity:.88}
-.gar{text-align:center;padding:18px;background:var(--sur);border:1px solid var(--b);border-radius:12px;margin-bottom:36px;font-size:13px;color:var(--t2)}
-.cform{background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:28px;margin-bottom:36px}
-.cform h2{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:6px;color:var(--t)}
-.cform .sub{font-size:13px;color:var(--t2);margin-bottom:22px}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.fg label{font-size:12px;font-weight:500;color:var(--t2)}
-.fg input,.fg select,.fg textarea{padding:10px 14px;border:1px solid var(--b2);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none;transition:border-color .15s}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#1D9E75}
-.fg textarea{resize:vertical;min-height:80px}
-.fsub{display:flex;align-items:center;gap:8px;padding:12px 22px;background:#1D9E75;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}
-.fsub:hover{opacity:.88}
-.faq-item{border-bottom:1px solid var(--b)}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 0;font-size:14px;font-weight:500;cursor:pointer;color:var(--t);gap:16px;background:none;border:none;width:100%;text-align:left;transition:color .15s}
-.faq-q:hover{color:#1D9E75}
-.faq-a{font-size:13px;color:var(--t2);line-height:1.65;padding-bottom:16px;display:none}
-.faq-a.open{display:block}
+nav{background:var(--gd);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-logo-icon{width:34px;height:34px;background:#1D9E75;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.nav-logo-name{font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em}
+.nav-logo-name em{color:#9FE1CB;font-style:normal}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link{font-size:13px;font-weight:500;color:rgba(255,255,255,.5);padding:7px 14px;border-radius:7px;cursor:pointer;transition:.15s;white-space:nowrap}
+.nav-link:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}
+.nav-link.active{color:#fff;background:rgba(255,255,255,.1)}
+.nav-yt{display:flex;align-items:center;gap:7px;padding:8px 16px;background:#ff0000;border-radius:8px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;transition:.2s;white-space:nowrap;flex-shrink:0}
+.nav-yt:hover{background:#cc0000;transform:translateY(-1px)}
 
 /* MODALS */
-.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
-.mo.open{display:flex}
-.modal{background:var(--sur);border-radius:16px;max-width:720px;width:100%;overflow:hidden;position:relative;margin:auto}
-.mh{height:200px;display:flex;align-items:flex-end;padding:24px}
-.mh h1{font-family:'Fraunces',serif;font-size:24px;font-weight:500;color:#fff;line-height:1.25;letter-spacing:-.02em}
-.mb{padding:28px 32px 36px}
-.mm{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--t3);margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--b);flex-wrap:wrap}
-.art{font-size:15px;line-height:1.75;color:var(--t2)}
-.art p{margin-bottom:16px}
-.art h2{font-family:'Fraunces',serif;font-size:19px;font-weight:500;color:var(--t);margin:26px 0 12px}
-.art .hl{background:#E1F5EE;border-left:3px solid #1D9E75;padding:14px 18px;border-radius:0 8px 8px 0;margin:20px 0;font-size:14px;color:#0F6E56;font-weight:500}
-.cbtn{position:absolute;top:16px;right:16px;width:34px;height:34px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px;transition:background .15s}
-.cbtn:hover{background:rgba(255,255,255,.28)}
-.bmod{background:var(--sur);border-radius:16px;max-width:520px;width:100%;overflow:hidden;position:relative;margin:auto}
-.bmh{padding:26px 26px 20px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:16px}
-.bmav{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.bmb{padding:22px 26px 26px}
-.bmb p{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:14px}
-.bdr{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--t2);margin-bottom:8px}
-.bmca{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-.bmca a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 0;border-radius:10px;font-size:13px;font-weight:500;transition:opacity .15s;min-width:130px}
-.bc1{background:#1D9E75;color:#fff}.bc1:hover{opacity:.88}
-.bc2{border:1.5px solid var(--b2);color:var(--t2)}.bc2:hover{color:var(--t)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--sur);border-radius:20px;max-width:720px;width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-hero{background:#04342C;padding:32px 36px;flex-shrink:0}
+.modal-hero h1{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:#fff;line-height:1.3}
+.modal-meta{font-size:12px;color:rgba(255,255,255,.4);margin-top:8px}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:rgba(255,255,255,.1);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.modal-close:hover{background:rgba(255,255,255,.2)}
+.modal-body{padding:28px 36px;overflow-y:auto;flex:1;font-size:15px;color:var(--t2);line-height:1.75}
+.modal-body p{margin-bottom:16px}
+.modal-body h2{font-size:17px;font-weight:700;color:var(--t);margin:24px 0 8px}
+.modal-body .hl{background:var(--gl);border-left:3px solid var(--g);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0;font-size:14px;color:var(--gm)}
 
-/* FOOTER */
-footer{border-top:1px solid var(--b);padding:30px 0;margin-top:8px}
-.fi{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.fc{font-size:12px;color:var(--t3)}
-.fls{display:flex;gap:20px}
-.fl{font-size:12px;color:var(--t3);cursor:pointer}.fl:hover{color:var(--t2)}
-.toast{position:fixed;bottom:24px;right:24px;background:#1a1a18;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
-.toast.show{transform:translateY(0);opacity:1}
+/* INICIO — SPLIT SCREEN */
+.split{display:grid;grid-template-columns:55% 45%;min-height:600px;position:relative;overflow:hidden}
+.split-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.split-left{background:#04342C;position:relative;z-index:1;display:flex;flex-direction:column}
+.split-left-glow{position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(29,158,117,0.12);pointer-events:none}
+.split-content{padding:48px 40px 32px;flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;animation:fadeUp .6s ease both}
+.split-live{display:flex;align-items:center;gap:8px;font-size:11px;color:#9FE1CB;font-weight:500;margin-bottom:20px}
+.split-live-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 1.4s infinite}
+.split-cat{font-size:10px;font-weight:700;color:#1D9E75;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.split-cat::before{content:'';display:inline-block;width:24px;height:2px;background:#1D9E75}
+.split-title{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:#fff;line-height:1.25;letter-spacing:-0.01em;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;transition:opacity .2s}
+.split-title:hover{opacity:.8}
+.split-excerpt{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;margin-bottom:24px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.split-meta{font-size:11px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:6px;margin-bottom:28px}
+.split-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn-primary{background:#1D9E75;color:#fff;padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+.btn-primary:hover{background:#0F6E56;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.15);padding:11px 22px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+.btn-ghost:hover{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.3)}
+.split-footer{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.06);position:relative;z-index:2}
+.split-stat{padding:14px 20px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
+.split-stat:last-child{border-right:none}
+.split-stat-n{font-size:20px;font-weight:800;color:#9FE1CB;letter-spacing:-0.02em}
+.split-stat-l{font-size:10px;color:rgba(255,255,255,.25);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
 
-.tv-chip{font-size:11px;padding:5px 11px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2);transition:all .15s;white-space:nowrap}
-.tv-chip:hover{background:#1D9E75;color:#fff;border-color:#1D9E75}
-.period-btn{padding:3px 8px;font-size:11px;font-weight:500;border:1px solid var(--b2);border-radius:6px;background:var(--bg);color:var(--t3);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
-.period-btn:hover{border-color:#1D9E75;color:#1D9E75}
-.active-period{background:#1D9E75!important;color:#fff!important;border-color:#1D9E75!important}
+/* SPLIT RIGHT */
+.split-right{background:var(--bg);border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;position:relative;z-index:1}
+.split-mkts{padding:20px 24px;border-bottom:1px solid var(--b)}
+.split-panel-label{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.split-mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mkt-card{background:var(--sur);border:0.5px solid var(--b);border-radius:10px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;transition:.2s}
+.mkt-card:hover{border-color:var(--g);transform:translateY(-1px)}
+.mkt-sym{font-size:11px;font-weight:700;color:var(--t)}
+.mkt-name{font-size:10px;color:var(--t3);margin-top:1px}
+.mkt-spark{display:flex;align-items:flex-end;gap:1.5px;height:16px;margin-top:5px}
+.mkt-spark-bar{width:2.5px;border-radius:1px}
+.mkt-price{font-size:14px;font-weight:700;color:var(--t);text-align:right;font-variant-numeric:tabular-nums}
+.mkt-chg{font-size:10px;font-weight:600;text-align:right;margin-top:2px;padding:1px 6px;border-radius:20px}
+.mkt-chg.up{color:#085041;background:#E1F5EE}
+.mkt-chg.dn{color:#791F1F;background:#FCEBEB}
+.split-news{padding:16px 24px;flex:1}
+.news-mini-item{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--b);cursor:pointer;transition:.15s}
+.news-mini-item:last-child{border-bottom:none}
+.news-mini-item:hover{opacity:.65}
+.news-mini-dot{width:5px;height:5px;border-radius:50%;background:var(--g);flex-shrink:0;margin-top:6px}
+.news-mini-cat{font-size:9px;font-weight:700;color:var(--g);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.news-mini-title{font-size:12px;font-weight:600;color:var(--t);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-mini-time{font-size:10px;color:var(--t3);margin-top:3px}
+.split-yt{background:#04342C;padding:14px 24px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;border-top:1px solid rgba(255,255,255,.06)}
+.split-yt:hover{background:#085041}
+.split-yt-icon{width:34px;height:34px;background:#ff0000;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.split-yt-title{font-size:12px;font-weight:600;color:#fff}
+.split-yt-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
 
-/* EDUCACIÓN */
-.edu-hero{padding:48px 0 36px;text-align:center;background:linear-gradient(180deg,var(--gl) 0%,transparent 100%);margin:-1px 0 32px;border-radius:0 0 24px 24px}
-.edu-hero h1{font-family:'Fraunces',serif;font-size:36px;font-weight:500;color:var(--t);letter-spacing:-.02em;margin-bottom:12px}
-.edu-hero p{font-size:16px;color:var(--t2);max-width:580px;margin:0 auto;line-height:1.65}
-.edu-cats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:24px}
-.edu-cat{display:flex;align-items:center;gap:7px;padding:10px 18px;background:var(--sur);border:1px solid var(--b);border-radius:30px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;transition:all .2s}
+/* NEWS SECTION */
+.section-wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:32px 0 20px}
+.section-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--t);letter-spacing:-0.01em}
+.section-line{flex:1;height:1px;background:var(--b);margin:0 16px}
+.section-count{font-size:12px;color:var(--t3)}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+.news-card{background:var(--sur);border:0.5px solid var(--b);border-radius:14px;overflow:hidden;cursor:pointer;transition:.25s;display:flex;flex-direction:column}
+.news-card:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:0 8px 32px rgba(29,158,117,0.1)}
+.news-card-accent{height:3px}
+.news-card-body{padding:18px;flex:1;display:flex;flex-direction:column}
+.news-card-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding:3px 8px;border-radius:20px;display:inline-block;width:fit-content}
+.tag-eco{color:#085041;background:#E1F5EE}
+.tag-mkt{color:#791F1F;background:#FCEBEB}
+.tag-int{color:#0C447C;background:#E6F1FB}
+.tag-fin{color:#633806;background:#FAEEDA}
+.tag-ana{color:#3C3489;background:#EEEDFE}
+.news-card-title{font-size:15px;font-weight:700;color:var(--t);line-height:1.35;letter-spacing:-0.01em;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.news-card-excerpt{font-size:13px;color:var(--t2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:14px}
+.news-card-footer{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--t3);padding-top:12px;border-top:0.5px solid var(--b)}
+.news-card-read{color:var(--g);font-weight:600;display:flex;align-items:center;gap:4px}
+.ad-card{background:var(--gl);border:0.5px solid rgba(29,158,117,0.3);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.2s}
+.ad-card:hover{border-color:var(--g)}
+.ad-label{font-size:9px;font-weight:700;color:var(--gm);letter-spacing:.12em;text-transform:uppercase}
+.ad-icon{font-size:28px}
+.ad-name{font-size:14px;font-weight:700;color:var(--gd)}
+.ad-desc{font-size:12px;color:var(--gm);line-height:1.5}
+.ad-tag{font-size:11px;color:var(--gm);opacity:.6}
+.ad-cta{margin-top:auto;font-size:12px;font-weight:600;color:var(--g)}
+
+/* EDUCACION */
+.edu-wrap{max-width:1280px;margin:0 auto;padding:0 28px 60px}
+.edu-hero-sec{background:#04342C;padding:60px 28px;text-align:center;position:relative;overflow:hidden}
+.edu-hero-sec::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(29,158,117,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(29,158,117,0.06) 1px,transparent 1px);background-size:40px 40px}
+.edu-hero-title{font-family:'Fraunces',serif;font-size:38px;font-weight:600;color:#fff;letter-spacing:-0.02em;margin-bottom:12px;position:relative;z-index:1}
+.edu-hero-title em{color:#9FE1CB;font-style:normal}
+.edu-hero-sub{font-size:15px;color:rgba(255,255,255,.45);max-width:520px;margin:0 auto 28px;position:relative;z-index:1;line-height:1.65}
+.edu-cats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.edu-cat{padding:9px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:30px;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;transition:.2s}
 .edu-cat:hover,.edu-cat.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
-.edu-section{margin-bottom:40px}
-.edu-section-title{font-family:'Fraunces',serif;font-size:22px;font-weight:500;color:var(--t);margin-bottom:6px}
-.edu-section-sub{font-size:13px;color:var(--t2);margin-bottom:20px}
-.edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.edu-card{background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:22px;cursor:pointer;transition:border-color .2s,transform .15s;display:flex;flex-direction:column;gap:12px}
-.edu-card:hover{border-color:var(--b2);transform:translateY(-2px)}
-.edu-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.edu-card h3{font-size:15px;font-weight:600;color:var(--t);line-height:1.3}
-.edu-card p{font-size:13px;color:var(--t2);line-height:1.55;flex:1}
-.edu-tag{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.04em;width:fit-content}
-.edu-lv1{background:#E1F5EE;color:#0F6E56}
-.edu-lv2{background:#E6F1FB;color:#185FA5}
-.edu-lv3{background:#FAEEDA;color:#854F0B}
-.edu-arrow{font-size:12px;font-weight:500;color:#1D9E75;display:flex;align-items:center;gap:4px;margin-top:auto}
-
-/* CALCULADORAS */
+.edu-section-h{padding:36px 0 18px}
+.edu-section-h h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--t);margin-bottom:4px}
+.edu-section-h p{font-size:13px;color:var(--t3)}
 .calc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:40px}
-.calc-card{background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:24px}
-.calc-title{font-size:15px;font-weight:600;color:var(--t);margin-bottom:4px}
-.calc-sub{font-size:12px;color:var(--t3);margin-bottom:20px}
+.calc-card{background:var(--sur);border:0.5px solid var(--b);border-radius:16px;padding:24px}
+.calc-card-title{font-size:15px;font-weight:700;color:var(--t);margin-bottom:4px}
+.calc-card-sub{font-size:12px;color:var(--t3);margin-bottom:20px}
 .calc-row{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .calc-row label{font-size:12px;font-weight:500;color:var(--t2)}
-.calc-row input,.calc-row select{padding:9px 13px;border:1px solid var(--b2);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none;transition:border-color .15s}
-.calc-row input:focus,.calc-row select:focus{border-color:#1D9E75}
-.calc-btn{width:100%;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s;font-family:'Inter',sans-serif;margin-top:4px}
-.calc-btn:hover{opacity:.88}
+.calc-row input,.calc-row select{padding:9px 13px;border:1px solid var(--b2);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none;transition:.15s}
+.calc-row input:focus,.calc-row select:focus{border-color:var(--g)}
+.calc-submit{width:100%;padding:11px;background:var(--g);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px;transition:.2s}
+.calc-submit:hover{background:var(--gm)}
 .calc-result{margin-top:16px;padding:16px;background:var(--gl);border-radius:10px;display:none}
 .calc-result.show{display:block}
-.calc-result-num{font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:#0F6E56;margin-bottom:4px}
-.calc-result-label{font-size:12px;color:#0F6E56}
-.calc-result-detail{font-size:12px;color:#0F6E56;margin-top:8px;line-height:1.5;opacity:.8}
-
-/* PORTAFOLIOS */
+.calc-result-num{font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--gm);margin-bottom:4px}
+.calc-result-label{font-size:12px;color:var(--gm)}
+.calc-result-detail{font-size:12px;color:var(--gm);margin-top:8px;line-height:1.5;opacity:.8}
 .port-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
-.port-card{background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:22px}
-.port-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.port-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.port-name{font-size:15px;font-weight:600;color:var(--t)}
-.port-desc{font-size:12px;color:var(--t3)}
-.port-bar{margin-bottom:8px}
+.port-card{background:var(--sur);border:0.5px solid var(--b);border-radius:16px;padding:22px}
+.port-card.featured{border-color:var(--g);border-width:1.5px}
+.port-badge{font-size:10px;font-weight:700;color:#fff;background:var(--g);padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;letter-spacing:.04em}
+.port-icon{font-size:24px;margin-bottom:10px}
+.port-name{font-size:16px;font-weight:700;color:var(--t);margin-bottom:3px}
+.port-desc{font-size:12px;color:var(--t3);margin-bottom:16px}
+.port-bar-row{margin-bottom:8px}
 .port-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:4px}
-.port-bar-track{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
-.port-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
-.port-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--b)}
-.port-stat-n{font-size:16px;font-weight:600;color:var(--t)}
-.port-stat-l{font-size:11px;color:var(--t3);margin-top:1px}
+.port-bar-track{height:6px;background:var(--b);border-radius:3px;overflow:hidden}
+.port-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.port-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;padding-top:14px;border-top:0.5px solid var(--b)}
+.port-stat-n{font-size:16px;font-weight:700;color:var(--t)}
+.port-stat-l{font-size:11px;color:var(--t3)}
+.guides-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+.guide-card{background:var(--sur);border:0.5px solid var(--b);border-radius:14px;padding:20px;cursor:pointer;transition:.2s;display:flex;flex-direction:column;gap:10px}
+.guide-card:hover{border-color:var(--g);transform:translateY(-2px)}
+.guide-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.guide-lv{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.04em;width:fit-content}
+.lv-beg{background:#E1F5EE;color:#085041}
+.lv-mid{background:#E6F1FB;color:#0C447C}
+.lv-adv{background:#FAEEDA;color:#633806}
+.guide-title{font-size:14px;font-weight:700;color:var(--t);line-height:1.3;flex:1}
+.guide-desc{font-size:12px;color:var(--t2);line-height:1.55}
+.guide-arrow{font-size:12px;font-weight:600;color:var(--g);display:flex;align-items:center;gap:4px}
+.tips-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:40px}
+.tip-card{background:var(--sur);border:0.5px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px}
+.tip-emoji{font-size:24px;flex-shrink:0}
+.tip-title{font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px}
+.tip-text{font-size:12px;color:var(--t2);line-height:1.55}
 
-@media(max-width:960px){.edu-grid,.calc-grid,.port-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.edu-grid,.calc-grid,.port-grid{grid-template-columns:1fr}}
+/* DIRECTORIO */
+.dir-wrap{max-width:1280px;margin:0 auto;padding:0 28px 60px}
+.dir-hero{background:#04342C;padding:48px 28px;text-align:center}
+.dir-hero h1{font-family:'Fraunces',serif;font-size:32px;font-weight:600;color:#fff;margin-bottom:8px}
+.dir-hero p{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:24px}
+.dir-cats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.dir-cat{padding:8px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:30px;font-size:12px;font-weight:500;color:rgba(255,255,255,.5);cursor:pointer;transition:.2s}
+.dir-cat:hover,.dir-cat.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.dir-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px;margin-bottom:40px}
+.biz-card{background:var(--sur);border:0.5px solid var(--b);border-radius:16px;overflow:hidden;cursor:pointer;transition:.25s}
+.biz-card:hover{border-color:var(--g);transform:translateY(-3px)}
+.biz-top{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.biz-body{padding:18px}
+.biz-plan{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:8px}
+.biz-name{font-size:15px;font-weight:700;color:var(--t);margin-bottom:3px}
+.biz-giro{font-size:12px;color:var(--t3);margin-bottom:8px}
+.biz-desc{font-size:12px;color:var(--t2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:12px}
+.biz-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.biz-tag{font-size:10px;padding:2px 8px;background:var(--gl);color:var(--gm);border-radius:20px}
+.biz-footer{display:flex;gap:8px;padding-top:12px;border-top:0.5px solid var(--b)}
+.biz-btn-call{flex:1;padding:8px;background:var(--g);color:#fff;border-radius:7px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;transition:.2s;font-family:inherit}
+.biz-btn-call:hover{background:var(--gm)}
+.biz-btn-mail{flex:1;padding:8px;background:var(--gl);color:var(--gm);border-radius:7px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;transition:.2s;font-family:inherit}
+.biz-empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--t3)}
 
-@media(max-width:960px){.hero-grid,.planes{grid-template-columns:1fr}.bg{grid-template-columns:repeat(2,1fr)}.ng{grid-template-columns:repeat(2,1fr)}.planes{max-width:420px;margin-left:auto;margin-right:auto}.fr{grid-template-columns:1fr}}
-@media(max-width:640px){.nls{display:none}.ng,.bg{grid-template-columns:1fr}.yts{flex-direction:column;text-align:center}.sr{gap:20px}.ds{flex-direction:column}}
+/* ANUNCIATE — dentro del directorio */
+.anun-section{background:var(--gd);border-radius:20px;padding:40px;margin:0 0 40px;text-align:center}
+.anun-title{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:#fff;margin-bottom:8px}
+.anun-sub{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:32px}
+.planes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.plan-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:24px;text-align:left;transition:.2s}
+.plan-card.featured{border-color:#1D9E75;background:rgba(29,158,117,0.1)}
+.plan-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.plan-price{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
+.plan-period{font-size:12px;color:rgba(255,255,255,.3)}
+.plan-feats{margin:16px 0;display:flex;flex-direction:column;gap:6px}
+.plan-feat{font-size:12px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px}
+.plan-feat::before{content:'✓';color:#1D9E75;font-weight:700;flex-shrink:0}
+.plan-feat.no{color:rgba(255,255,255,.25)}
+.plan-feat.no::before{content:'—';color:rgba(255,255,255,.2)}
+.plan-btn{width:100%;padding:10px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;transition:.2s}
+.plan-btn:hover{background:#0F6E56}
+.anun-form{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px;text-align:left;max-width:560px;margin:0 auto}
+.anun-form-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:20px}
+.form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-row label{font-size:12px;font-weight:500;color:rgba(255,255,255,.5)}
+.form-row input,.form-row select,.form-row textarea{padding:10px 14px;border:1px solid rgba(255,255,255,.12);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:rgba(255,255,255,.06);color:#fff;outline:none;transition:.2s}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:#1D9E75}
+.form-row select option{background:#04342C;color:#fff}
+.form-submit{width:100%;padding:13px;background:#1D9E75;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;transition:.2s}
+.form-submit:hover{background:#0F6E56}
+
+/* FOOTER */
+footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32px 28px;margin-top:0}
+.footer-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-size:15px;font-weight:700;color:#9FE1CB}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-link{font-size:12px;color:rgba(255,255,255,.3);cursor:pointer;transition:.15s}
+.footer-link:hover{color:rgba(255,255,255,.7)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,.2)}
+
+@media(max-width:900px){
+  .split{grid-template-columns:1fr}
+  .split-right{display:none}
+  .news-grid,.guides-grid,.port-grid{grid-template-columns:repeat(2,1fr)}
+  .calc-grid,.tips-grid,.planes-grid,.dir-grid{grid-template-columns:1fr}
+  .split-mkt-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .news-grid,.guides-grid,.port-grid{grid-template-columns:1fr}
+  .fpw{display:none}
+}
 </style>
 </head>
 <body>
 
-<!-- INSTALL BANNER -->
-<div id="install-banner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:300;background:#1a1a18;color:#fff;border-radius:14px;padding:14px 18px;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.3);max-width:360px;width:calc(100% - 40px)">
-  <div style="width:40px;height:40px;background:#1D9E75;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-    <svg width="20" height="20" viewBox="0 0 18 18" fill="none"><polyline points="2,13 6,8 10,10 16,4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<!-- FLOATING WIDGET — Últimas noticias -->
+<div class="fpw" id="fpw">
+  <div class="fpw-header" onclick="document.getElementById('fpw').classList.toggle('collapsed')">
+    <div class="fpw-title"><div class="fpw-dot"></div>Últimas noticias</div>
+    <div class="fpw-toggle">▲</div>
   </div>
-  <div style="flex:1">
-    <div style="font-size:13px;font-weight:600;margin-bottom:2px">Instalar VisorFinanciero</div>
-    <div style="font-size:11px;color:rgba(255,255,255,.6)">Agregar a tu pantalla de inicio</div>
+  <div class="fpw-body" id="fpw-news">
+    <div style="padding:10px 14px;font-size:11px;color:rgba(255,255,255,.4)">Cargando...</div>
   </div>
-  <button onclick="installApp()" style="background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap">Instalar</button>
-  <button onclick="closeBanner()" style="background:none;border:none;color:rgba(255,255,255,.5);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0">✕</button>
+  <div class="fpw-footer">
+    <div class="fpw-btn" onclick="document.getElementById('news-grid')?.scrollIntoView({behavior:'smooth'});document.getElementById('fpw').classList.add('collapsed')">Ver todas →</div>
+  </div>
 </div>
 
 <!-- TICKER -->
-<div class="tkr">
-  <div class="tkr-t">
-    <div class="ti">IPC <span class="up">52,340 ▲ +0.8%</span></div>
-    <div class="ti">USD/MXN <span class="dn">17.24 ▼ -0.3%</span></div>
-    <div class="ti">BTC <span class="up">$68,400 ▲ +2.1%</span></div>
-    <div class="ti">Petróleo WTI <span class="dn">$78.5 ▼ -0.5%</span></div>
-    <div class="ti">S&P 500 <span class="up">5,280 ▲ +0.4%</span></div>
-    <div class="ti">CETES 28d <span class="up">11.2%</span></div>
-    <div class="ti">ORO <span class="up">$2,310 ▲ +0.6%</span></div>
-    <div class="ti">NASDAQ <span class="up">18,640 ▲ +0.9%</span></div>
-    <div class="ti">EUR/MXN <span class="up">18.72 ▲ +0.2%</span></div>
-    <div class="ti">ETH <span class="up">$3,480 ▲ +1.4%</span></div>
-    <div class="ti">IPC <span class="up">52,340 ▲ +0.8%</span></div>
-    <div class="ti">USD/MXN <span class="dn">17.24 ▼ -0.3%</span></div>
-    <div class="ti">BTC <span class="up">$68,400 ▲ +2.1%</span></div>
-    <div class="ti">Petróleo WTI <span class="dn">$78.5 ▼ -0.5%</span></div>
-    <div class="ti">S&P 500 <span class="up">5,280 ▲ +0.4%</span></div>
-    <div class="ti">CETES 28d <span class="up">11.2%</span></div>
-    <div class="ti">ORO <span class="up">$2,310 ▲ +0.6%</span></div>
-    <div class="ti">NASDAQ <span class="up">18,640 ▲ +0.9%</span></div>
-    <div class="ti">EUR/MXN <span class="up">18.72 ▲ +0.2%</span></div>
-    <div class="ti">ETH <span class="up">$3,480 ▲ +1.4%</span></div>
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="t-item">IPC BMV <span class="t-up">52,340 ▲ +1.36%</span></div>
+    <div class="t-item">USD/MXN <span class="t-dn">17.24 ▼ -0.29%</span></div>
+    <div class="t-item">Bitcoin <span class="t-up">$68,420 ▲ +2.14%</span></div>
+    <div class="t-item">S&P 500 <span class="t-up">5,287 ▲ +0.41%</span></div>
+    <div class="t-item">Oro <span class="t-up">$2,318 ▲ +0.63%</span></div>
+    <div class="t-item">Petróleo WTI <span class="t-dn">$78.40 ▼ -0.51%</span></div>
+    <div class="t-item">NASDAQ <span class="t-up">18,640 ▲ +0.91%</span></div>
+    <div class="t-item">EUR/MXN <span class="t-up">18.71 ▲ +0.21%</span></div>
+    <div class="t-item">ETH <span class="t-up">$3,482 ▲ +1.37%</span></div>
+    <div class="t-item">CETES 28d <span class="t-up">11.20%</span></div>
+    <div class="t-item">WALMEX <span class="t-up">52.10 ▲ +1.2%</span></div>
+    <div class="t-item">AMXL <span class="t-up">18.32 ▲ +0.8%</span></div>
+    <div class="t-item">IPC BMV <span class="t-up">52,340 ▲ +1.36%</span></div>
+    <div class="t-item">USD/MXN <span class="t-dn">17.24 ▼ -0.29%</span></div>
+    <div class="t-item">Bitcoin <span class="t-up">$68,420 ▲ +2.14%</span></div>
+    <div class="t-item">S&P 500 <span class="t-up">5,287 ▲ +0.41%</span></div>
+    <div class="t-item">Oro <span class="t-up">$2,318 ▲ +0.63%</span></div>
+    <div class="t-item">Petróleo WTI <span class="t-dn">$78.40 ▼ -0.51%</span></div>
+    <div class="t-item">NASDAQ <span class="t-up">18,640 ▲ +0.91%</span></div>
+    <div class="t-item">EUR/MXN <span class="t-up">18.71 ▲ +0.21%</span></div>
+    <div class="t-item">ETH <span class="t-up">$3,482 ▲ +1.37%</span></div>
+    <div class="t-item">CETES 28d <span class="t-up">11.20%</span></div>
+    <div class="t-item">WALMEX <span class="t-up">52.10 ▲ +1.2%</span></div>
+    <div class="t-item">AMXL <span class="t-up">18.32 ▲ +0.8%</span></div>
   </div>
 </div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-in">
-    <a class="logo" href="#" onclick="showPage('inicio')">
-      <div class="lm"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polyline points="2,13 6,8 10,10 16,4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="12,4 16,4 16,8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      VisorFinanciero
-    </a>
-    <div class="nls">
-      <button class="nl active" id="nav-inicio" onclick="showPage('inicio')">Inicio</button>
-      <button class="nl" id="nav-directorio" onclick="showPage('directorio')">Directorio</button>
-      <button class="nl" id="nav-mercados" onclick="showPage('mercados')">Mercados</button>
-      <button class="nl" id="nav-educacion" onclick="showPage('educacion')">Educación</button>
-      <button class="btn-yt" onclick="window.open('https://youtube.com','_blank')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8z"/><polygon points="10,15 15,12 10,9" fill="white"/></svg>
-        YouTube
-      </button>
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="showPage('inicio')" style="cursor:pointer">
+      <div class="nav-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 18 18" fill="none"><polyline points="2,13 6,8 10,10 16,4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="12,4 16,4 16,8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="nav-logo-name">Visor<em>Financiero</em></div>
     </div>
-    <button class="btn-a" onclick="showPage('anunciate')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Anúnciate
-    </button>
+    <div class="nav-links">
+      <div class="nav-link active" id="nav-inicio" onclick="showPage('inicio')">Inicio</div>
+      <div class="nav-link" id="nav-educacion" onclick="showPage('educacion')">Educación</div>
+      <div class="nav-link" id="nav-directorio" onclick="showPage('directorio')">Directorio</div>
+    </div>
+    <a href="https://www.youtube.com/@MercadoAlDesnudo" target="_blank" class="nav-yt">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8z"/><polygon points="10,15 15,12 10,9" fill="white"/></svg>
+      @MercadoAlDesnudo
+    </a>
   </div>
 </nav>
 
-<!-- INICIO -->
+<!-- MODAL ARTÍCULO -->
+<div class="modal-overlay" id="modal-art" onclick="if(event.target===this)closeModal('modal-art')">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-art')">✕</button>
+    <div class="modal-hero" id="modal-art-hero"></div>
+    <div class="modal-body">
+      <div id="modal-art-meta" style="font-size:12px;color:var(--t3);margin-bottom:20px"></div>
+      <div id="modal-art-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDUCACIÓN -->
+<div class="modal-overlay" id="modal-edu" onclick="if(event.target===this)closeModal('modal-edu')">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-edu')">✕</button>
+    <div class="modal-hero" id="modal-edu-hero"></div>
+    <div class="modal-body">
+      <div id="modal-edu-meta" style="font-size:12px;color:var(--t3);margin-bottom:20px"></div>
+      <div id="modal-edu-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DIRECTORIO -->
+<div class="modal-overlay" id="modal-biz" onclick="if(event.target===this)closeModal('modal-biz')">
+  <div class="modal-box" style="position:relative;max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-biz')">✕</button>
+    <div class="modal-hero" id="modal-biz-hero"></div>
+    <div class="modal-body" id="modal-biz-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ INICIO ═══════════════════════════════════ -->
 <div class="page active" id="page-inicio">
-<main><div class="wrap">
 
-  <section class="hero-sec">
-    <div class="hero-grid">
-      <div class="hero-main" id="hero-card" onclick="openHeroArt()">
-        <div class="h-img">
-          <div class="h-tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Análisis destacado</div>
-          <h2 class="h-hl" id="hero-title">Cargando noticia principal...</h2>
-        </div>
-        <div class="h-body">
-          <p id="hero-intro">Cargando contenido desde Google Sheets...</p>
-          <div class="meta"><span id="hero-ago">Ahora</span><span class="md"></span><span id="hero-read">5 min</span></div>
-          <button class="rb">Leer análisis completo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-        </div>
-      </div>
-      <div class="side-list" id="hero-sides">
-        <div style="padding:16px;color:var(--t3);font-size:13px">Cargando noticias recientes...</div>
-      </div>
-    </div>
-  </section>
+  <!-- SPLIT SCREEN HERO -->
+  <div class="split">
+    <canvas class="split-canvas" id="split-canvas"></canvas>
 
-  <div class="sh">
-    <span class="sl">Últimas noticias</span>
-    <div class="sln"></div>
-    <span id="news-count" style="font-size:11px;color:var(--t3)">Cargando...</span>
-  </div>
-
-  <div class="ng" id="news-grid">
-    <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3)">
-      <div style="width:28px;height:28px;border:2px solid var(--b2);border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div>
-      Cargando noticias en tiempo real...
-    </div>
-  </div>
-
-  <div class="yts">
-    <div class="yti"><svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8z"/><polygon points="10,15 15,12 10,9" fill="white"/></svg></div>
-    <div class="ytx"><strong>¿Lo viste en nuestro Short de YouTube?</strong><span>Aquí encuentras el análisis completo con fuentes, datos y todo el contexto que no cabe en 60 segundos.</span></div>
-    <button class="ytb" onclick="window.open('https://youtube.com','_blank')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Ver el canal</button>
-  </div>
-
-  <div class="pb">
-    <div><h3>¿Tienes un negocio? Llega a miles de lectores</h3><p>Promociona tu empresa en el directorio VisorFinanciero y aparece entre las noticias que leen emprendedores e inversores mexicanos. Desde $299 MXN/mes.</p></div>
-    <button class="pbb" onclick="showPage('anunciate')">Ver planes y precios →</button>
-  </div>
-
-</div></main>
-</div>
-
-<!-- MERCADOS -->
-<div class="page" id="page-mercados">
-<div class="wrap">
-  <div style="padding:32px 0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div>
-      <h1 style="font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--t);letter-spacing:-.02em">Mercados en tiempo real</h1>
-      <p style="font-size:13px;color:var(--t3);margin-top:4px">Actualizado cada 60 segundos · <span id="mkt-time">--</span></p>
-    </div>
-    <button onclick="loadMarkets()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--sur);border:1px solid var(--b2);border-radius:8px;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer">↻ Actualizar</button>
-  </div>
-
-  <div id="mkt-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:32px">
-    <div style="text-align:center;padding:40px;color:var(--t3);grid-column:1/-1">
-      <div style="width:28px;height:28px;border:2px solid var(--b2);border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div>
-      Cargando precios...
-    </div>
-  </div>
-
-  <!-- BUSCADOR + GRÁFICA TRADINGVIEW -->
-  <div style="background:var(--sur);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:24px">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--b)">
-      <div style="font-size:14px;font-weight:600;color:var(--t);margin-bottom:12px">Gráfica avanzada — TradingView</div>
-      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px;display:flex;gap:8px">
-          <input id="tv-search-input" type="text" placeholder="Busca cualquier activo: AMXL, BTC-USD, AAPL, FIBRAMQ..." 
-            style="flex:1;padding:10px 14px;border:1px solid var(--b2);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none"
-            onkeydown="if(event.key==='Enter')searchTV()"
-            oninput="showTVSuggestions(this.value)">
-          <button onclick="searchTV()" style="padding:10px 18px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap">
-            Buscar
-          </button>
+    <div class="split-left">
+      <div class="split-left-glow"></div>
+      <div class="split-content">
+        <div class="split-live"><div class="split-live-dot"></div>En vivo · VisorFinanciero</div>
+        <div class="split-cat" id="split-cat">Análisis destacado</div>
+        <div class="split-title" id="split-title" onclick="openHeroArt()">Cargando noticia principal...</div>
+        <div class="split-excerpt" id="split-excerpt">Cargando contenido desde Google Sheets...</div>
+        <div class="split-meta"><span id="split-time">Ahora</span><span style="opacity:.4">·</span><span id="split-read">5 min de lectura</span></div>
+        <div class="split-btns">
+          <button class="btn-primary" onclick="openHeroArt()">Leer análisis →</button>
+          <button class="btn-ghost" onclick="showPage('educacion')">Educación financiera</button>
         </div>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-size:11px;color:var(--t3);align-self:center">Acceso rápido:</span>
-        <span onclick="loadTV('SP:SPX','S&P 500')" class="tv-chip">🇺🇸 S&P 500</span>
-        <span onclick="loadTV('NASDAQ:IXIC','NASDAQ')" class="tv-chip">💻 NASDAQ</span>
-        <span onclick="loadTV('FX:USDMXN','USD/MXN')" class="tv-chip">💵 USD/MXN</span>
-        <span onclick="loadTV('FX:EURUSD','EUR/USD')" class="tv-chip">🇪🇺 EUR/USD</span>
-        <span onclick="loadTV('NYSE:AMX','América Móvil')" class="tv-chip">📱 América Móvil</span>
-        <span onclick="loadTV('NYSE:CX','Cemex')" class="tv-chip">🏗️ Cemex</span>
-        <span onclick="loadTV('BITSTAMP:BTCUSD','Bitcoin')" class="tv-chip">₿ Bitcoin</span>
-        <span onclick="loadTV('BITSTAMP:ETHUSD','Ethereum')" class="tv-chip">⟠ Ethereum</span>
-        <span onclick="loadTV('COMEX:GC1!','Oro')" class="tv-chip">🥇 Oro</span>
-        <span onclick="loadTV('NYMEX:CL1!','Petróleo WTI')" class="tv-chip">🛢️ Petróleo</span>
-        <span onclick="loadTV('NASDAQ:AAPL','Apple')" class="tv-chip">🍎 Apple</span>
-        <span onclick="loadTV('NASDAQ:NVDA','Nvidia')" class="tv-chip">🤖 Nvidia</span>
-        <span onclick="loadTV('NYSE:TSLA','Tesla')" class="tv-chip">⚡ Tesla</span>
-        <span onclick="loadTV('NASDAQ:AMZN','Amazon')" class="tv-chip">📦 Amazon</span>
+      <div class="split-footer">
+        <div class="split-stat"><div class="split-stat-n" id="stat-1">0k</div><div class="split-stat-l">Lectores</div></div>
+        <div class="split-stat"><div class="split-stat-n" id="stat-2">0</div><div class="split-stat-l">Artículos</div></div>
+        <div class="split-stat"><div class="split-stat-n">3/día</div><div class="split-stat-l">Publicaciones</div></div>
+        <div class="split-stat"><div class="split-stat-n">7/7</div><div class="split-stat-l">Días activo</div></div>
       </div>
     </div>
-    <div id="tradingview-widget" style="height:480px"></div>
-  </div>
 
-  <!-- DATOS FUNDAMENTALES TRADINGVIEW -->
-  <div style="background:var(--sur);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:24px">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--t)" id="fund-title">Datos fundamentales — IPC BMV</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:2px">Precio, volumen, capitalización y más</div>
+    <div class="split-right">
+      <!-- ÚLTIMAS NOTICIAS -->
+      <div class="split-mkts">
+        <div class="split-panel-label">
+          <span>Últimas noticias</span>
+          <span style="font-size:10px;color:var(--g);animation:pulse 2s infinite">● En vivo</span>
+        </div>
+        <div id="split-news-list">
+          <div class="news-mini-time" style="padding:8px 0;color:var(--t3)">Cargando...</div>
+        </div>
+      </div>
+
+      <!-- MINI CALCULADORA CETES -->
+      <div class="split-news" style="padding:16px 24px;border-top:1px solid var(--b)">
+        <div class="split-panel-label" style="margin-bottom:12px">
+          <span>💰 Calculadora CETES rápida</span>
+        </div>
+        <div style="font-size:12px;color:var(--t3);margin-bottom:12px">¿Cuánto ganarías invirtiendo hoy?</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:4px">Capital a invertir (MXN)</div>
+            <input id="mini-capital" type="number" value="10000" placeholder="Ej: 10,000"
+              style="width:100%;padding:9px 12px;border:1px solid var(--b2);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none"
+              oninput="calcMiniCetes()">
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:4px">Plazo</div>
+            <select id="mini-plazo" onchange="calcMiniCetes()"
+              style="width:100%;padding:9px 12px;border:1px solid var(--b2);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none">
+              <option value="28">28 días</option>
+              <option value="91">91 días (3 meses)</option>
+              <option value="182">182 días (6 meses)</option>
+              <option value="364" selected>364 días (1 año)</option>
+            </select>
+          </div>
+        </div>
+        <div id="mini-result" style="background:var(--gl);border-radius:10px;padding:12px 14px;display:none">
+          <div style="font-size:11px;color:var(--gm);margin-bottom:2px">Ganancia neta estimada</div>
+          <div id="mini-ganancia" style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--gm)"></div>
+          <div id="mini-detalle" style="font-size:11px;color:var(--gm);opacity:.7;margin-top:4px"></div>
+        </div>
+        <button onclick="showPage('educacion')" style="width:100%;margin-top:10px;padding:9px;background:transparent;border:1px solid var(--b2);border-radius:8px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit;transition:.2s" onmouseover="this.style.borderColor='var(--g)';this.style.color='var(--g)'" onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t2)'">
+          Ver calculadoras completas →
+        </button>
+      </div>
+
+      <!-- YOUTUBE BANNER -->
+      <div class="split-yt" onclick="window.open('https://www.youtube.com/@MercadoAlDesnudo','_blank')">
+        <div class="split-yt-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8z"/><polygon points="10,15 15,12 10,9" fill="white"/></svg></div>
+        <div><div class="split-yt-title">@MercadoAlDesnudo · YouTube</div><div class="split-yt-sub">Shorts financieros diarios · Ver canal →</div></div>
       </div>
     </div>
-    <div id="tv-fundamentals" style="min-height:200px"></div>
   </div>
 
-  <!-- TICKER TAPE TRADINGVIEW -->
-  <div style="background:var(--sur);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:24px">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--b)">
-      <div style="font-size:13px;font-weight:600;color:var(--t)">Precios en tiempo real</div>
+  <!-- NEWS GRID -->
+  <div class="section-wrap">
+    <div class="section-header">
+      <div class="section-title">Más noticias</div>
+      <div class="section-line"></div>
+      <div class="section-count" id="news-count">Cargando...</div>
     </div>
-    <div id="tv-ticker" style="padding:4px 0"></div>
-  </div>
-
-  <!-- BUSCADOR YAHOO FINANCE -->
-  <div style="background:var(--sur);border:1px solid var(--b);border-radius:14px;padding:24px;margin-bottom:24px">
-    <div style="font-size:15px;font-weight:600;color:var(--t);margin-bottom:6px">Buscar cualquier activo</div>
-    <div style="font-size:13px;color:var(--t2);margin-bottom:16px">Empresas, ETFs, FIBRAs, criptomonedas, índices — busca cualquier ticker del mundo</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-      <input id="yf-input" type="text" placeholder="Ej: AMXL, WALMEX, BTC-USD, FIBRAMQ, ^MXX, AAPL..." style="flex:1;min-width:200px;padding:11px 16px;border:1px solid var(--b2);border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none" onkeydown="if(event.key==='Enter')searchYF()">
-      <button onclick="searchYF()" style="display:flex;align-items:center;gap:7px;padding:11px 20px;background:#1D9E75;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Buscar
-      </button>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-      <span style="font-size:11px;color:var(--t3)">Populares:</span>
-      <span onclick="quickSearch('AMXL.MX')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">América Móvil</span>
-      <span onclick="quickSearch('WALMEX.MX')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">Walmex</span>
-      <span onclick="quickSearch('BTC-USD')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">Bitcoin</span>
-      <span onclick="quickSearch('^MXX')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">IPC BMV</span>
-      <span onclick="quickSearch('FIBRAMQ12.MX')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">FIBRA MQ</span>
-      <span onclick="quickSearch('AAPL')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">Apple</span>
-      <span onclick="quickSearch('CEMEXCPO.MX')" style="font-size:11px;padding:4px 10px;background:var(--bg);border:1px solid var(--b2);border-radius:20px;cursor:pointer;color:var(--t2)">Cemex</span>
-    </div>
-    <div id="yf-result" style="display:none;background:var(--bg);border:1px solid var(--b);border-radius:10px;overflow:hidden">
-      <iframe id="yf-frame" style="width:100%;height:500px;border:none" src=""></iframe>
+    <div class="news-grid" id="news-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--t3)">
+        <div style="width:28px;height:28px;border:2px solid var(--b2);border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px"></div>
+        Cargando noticias...
+      </div>
     </div>
   </div>
 
-  <div style="background:var(--sur);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:40px">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:13px;font-weight:600;color:var(--t)">Tabla de mercados</span>
-      <span style="font-size:11px;color:var(--t3)">Precios orientativos</span>
-    </div>
-    <div id="mkt-table" style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead>
-          <tr style="background:var(--bg)">
-            <th style="text-align:left;padding:12px 20px;font-weight:500;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.06em">Activo</th>
-            <th style="text-align:right;padding:12px 20px;font-weight:500;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.06em">Precio</th>
-            <th style="text-align:right;padding:12px 20px;font-weight:500;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.06em">Cambio</th>
-            <th style="text-align:right;padding:12px 20px;font-weight:500;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.06em">% Día</th>
-            <th style="text-align:left;padding:12px 20px;font-weight:500;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.06em">Categoría</th>
-          </tr>
-        </thead>
-        <tbody id="mkt-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div style="background:var(--bg);border:1px solid var(--b);border-radius:10px;padding:14px 18px;margin-bottom:40px;font-size:12px;color:var(--t3);text-align:center">
-    ⚠️ Los precios mostrados son orientativos y pueden tener un retraso de hasta 15 minutos. No constituyen asesoría de inversión.
-  </div>
-</div>
 </div>
 
-<!-- EDUCACIÓN FINANCIERA -->
+<!-- ═══════════════════════════════════ EDUCACIÓN ═══════════════════════════════════ -->
 <div class="page" id="page-educacion">
-<div class="wrap">
 
-  <!-- HERO -->
-  <div class="edu-hero">
-    <h1>Educación Financiera</h1>
-    <p>Todo lo que necesitas saber para tomar mejores decisiones con tu dinero — desde cero hasta nivel avanzado.</p>
+  <div class="edu-hero-sec">
+    <div class="edu-hero-title">Educación <em>financiera</em></div>
+    <div class="edu-hero-sub">Todo lo que necesitas para tomar mejores decisiones con tu dinero — desde cero hasta nivel avanzado.</div>
     <div class="edu-cats">
-      <div class="edu-cat active" onclick="setCat(this,'todos')">🎯 Todo</div>
-      <div class="edu-cat" onclick="setCat(this,'personal')">👤 Finanzas personales</div>
-      <div class="edu-cat" onclick="setCat(this,'inversion')">📈 Inversión</div>
-      <div class="edu-cat" onclick="setCat(this,'empresa')">🏢 Para empresas</div>
-      <div class="edu-cat" onclick="setCat(this,'crypto')">₿ Crypto</div>
+      <div class="edu-cat active" onclick="setEduCat(this,'todos')">Todo</div>
+      <div class="edu-cat" onclick="setEduCat(this,'personal')">Finanzas personales</div>
+      <div class="edu-cat" onclick="setEduCat(this,'inversion')">Inversión</div>
+      <div class="edu-cat" onclick="setEduCat(this,'empresa')">Para empresas</div>
+      <div class="edu-cat" onclick="setEduCat(this,'crypto')">Crypto</div>
     </div>
   </div>
 
-  <!-- CALCULADORAS -->
-  <div class="edu-section">
-    <div class="edu-section-title">🧮 Calculadoras financieras</div>
-    <div class="edu-section-sub">Herramientas prácticas para tomar mejores decisiones con números reales</div>
+  <div class="edu-wrap">
+    <div class="edu-section-h"><h2>Calculadoras financieras</h2><p>Herramientas prácticas con números reales</p></div>
     <div class="calc-grid">
-
-      <!-- CETES -->
       <div class="calc-card">
-        <div class="calc-title">💰 Calculadora CETES</div>
-        <div class="calc-sub">¿Cuánto ganarías invirtiendo en CETES?</div>
-        <div class="calc-row"><label>Capital inicial (MXN)</label><input id="c-capital" type="number" placeholder="10,000" value="10000"></div>
-        <div class="calc-row"><label>Tasa anual (%)</label><input id="c-tasa" type="number" placeholder="11.2" value="11.2" step="0.1"></div>
-        <div class="calc-row"><label>Plazo</label>
-          <select id="c-plazo">
-            <option value="28">28 días</option>
-            <option value="91">91 días (3 meses)</option>
-            <option value="182">182 días (6 meses)</option>
-            <option value="364" selected>364 días (1 año)</option>
-          </select>
-        </div>
-        <button class="calc-btn" onclick="calcCetes()">Calcular rendimiento</button>
-        <div class="calc-result" id="r-cetes">
-          <div class="calc-result-num" id="r-cetes-num"></div>
-          <div class="calc-result-label">Ganancia neta estimada</div>
-          <div class="calc-result-detail" id="r-cetes-detail"></div>
-        </div>
+        <div class="calc-card-title">Calculadora CETES</div>
+        <div class="calc-card-sub">¿Cuánto ganarías invirtiendo en CETES?</div>
+        <div class="calc-row"><label>Capital inicial (MXN)</label><input id="c-capital" type="number" value="10000"></div>
+        <div class="calc-row"><label>Tasa anual (%)</label><input id="c-tasa" type="number" value="11.2" step="0.1"></div>
+        <div class="calc-row"><label>Plazo</label><select id="c-plazo"><option value="28">28 días</option><option value="91">91 días</option><option value="182">182 días</option><option value="364" selected>364 días (1 año)</option></select></div>
+        <button class="calc-submit" onclick="calcCetes()">Calcular rendimiento</button>
+        <div class="calc-result" id="r-cetes"><div class="calc-result-num" id="r-cetes-num"></div><div class="calc-result-label">Ganancia neta estimada</div><div class="calc-result-detail" id="r-cetes-detail"></div></div>
       </div>
-
-      <!-- INTERÉS COMPUESTO -->
       <div class="calc-card">
-        <div class="calc-title">📊 Interés compuesto</div>
-        <div class="calc-sub">El poder de reinvertir tus ganancias año tras año</div>
-        <div class="calc-row"><label>Capital inicial (MXN)</label><input id="ic-capital" type="number" placeholder="50,000" value="50000"></div>
-        <div class="calc-row"><label>Aportación mensual (MXN)</label><input id="ic-aporte" type="number" placeholder="2,000" value="2000"></div>
-        <div class="calc-row"><label>Rendimiento anual (%)</label><input id="ic-tasa" type="number" placeholder="10" value="10" step="0.5"></div>
-        <div class="calc-row"><label>Años de inversión</label><input id="ic-años" type="number" placeholder="10" value="10" min="1" max="40"></div>
-        <button class="calc-btn" onclick="calcIC()">Calcular</button>
-        <div class="calc-result" id="r-ic">
-          <div class="calc-result-num" id="r-ic-num"></div>
-          <div class="calc-result-label">Patrimonio final estimado</div>
-          <div class="calc-result-detail" id="r-ic-detail"></div>
-        </div>
+        <div class="calc-card-title">Interés compuesto</div>
+        <div class="calc-card-sub">El poder de reinvertir tus ganancias año tras año</div>
+        <div class="calc-row"><label>Capital inicial (MXN)</label><input id="ic-capital" type="number" value="50000"></div>
+        <div class="calc-row"><label>Aportación mensual (MXN)</label><input id="ic-aporte" type="number" value="2000"></div>
+        <div class="calc-row"><label>Rendimiento anual (%)</label><input id="ic-tasa" type="number" value="10" step="0.5"></div>
+        <div class="calc-row"><label>Años de inversión</label><input id="ic-años" type="number" value="10" min="1" max="40"></div>
+        <button class="calc-submit" onclick="calcIC()">Calcular</button>
+        <div class="calc-result" id="r-ic"><div class="calc-result-num" id="r-ic-num"></div><div class="calc-result-label">Patrimonio final estimado</div><div class="calc-result-detail" id="r-ic-detail"></div></div>
       </div>
-
-      <!-- FONDO DE EMERGENCIA -->
       <div class="calc-card">
-        <div class="calc-title">🛡️ Fondo de emergencia</div>
-        <div class="calc-sub">¿Cuánto necesitas ahorrar para estar protegido?</div>
-        <div class="calc-row"><label>Gasto mensual total (MXN)</label><input id="fe-gasto" type="number" placeholder="15,000" value="15000"></div>
-        <div class="calc-row"><label>Meses de cobertura recomendados</label>
-          <select id="fe-meses">
-            <option value="3">3 meses (mínimo)</option>
-            <option value="6" selected>6 meses (recomendado)</option>
-            <option value="12">12 meses (máximo seguridad)</option>
-          </select>
-        </div>
-        <div class="calc-row"><label>Ahorro mensual disponible (MXN)</label><input id="fe-ahorro" type="number" placeholder="3,000" value="3000"></div>
-        <button class="calc-btn" onclick="calcFE()">Calcular</button>
-        <div class="calc-result" id="r-fe">
-          <div class="calc-result-num" id="r-fe-num"></div>
-          <div class="calc-result-label">Meta de fondo de emergencia</div>
-          <div class="calc-result-detail" id="r-fe-detail"></div>
-        </div>
+        <div class="calc-card-title">Fondo de emergencia</div>
+        <div class="calc-card-sub">¿Cuánto necesitas ahorrar para estar protegido?</div>
+        <div class="calc-row"><label>Gasto mensual total (MXN)</label><input id="fe-gasto" type="number" value="15000"></div>
+        <div class="calc-row"><label>Meses de cobertura</label><select id="fe-meses"><option value="3">3 meses (mínimo)</option><option value="6" selected>6 meses (recomendado)</option><option value="12">12 meses</option></select></div>
+        <div class="calc-row"><label>Ahorro mensual disponible (MXN)</label><input id="fe-ahorro" type="number" value="3000"></div>
+        <button class="calc-submit" onclick="calcFE()">Calcular</button>
+        <div class="calc-result" id="r-fe"><div class="calc-result-num" id="r-fe-num"></div><div class="calc-result-label">Meta de fondo de emergencia</div><div class="calc-result-detail" id="r-fe-detail"></div></div>
       </div>
-
-      <!-- RETIRO / AFORE -->
       <div class="calc-card">
-        <div class="calc-title">🏖️ Calculadora de retiro</div>
-        <div class="calc-sub">¿Cuánto necesitas para jubilarte tranquilo?</div>
-        <div class="calc-row"><label>Tu edad actual</label><input id="ret-edad" type="number" placeholder="30" value="30"></div>
-        <div class="calc-row"><label>Edad de retiro deseada</label><input id="ret-meta" type="number" placeholder="65" value="65"></div>
-        <div class="calc-row"><label>Gasto mensual en retiro (MXN)</label><input id="ret-gasto" type="number" placeholder="20,000" value="20000"></div>
-        <div class="calc-row"><label>Ahorro actual en Afore (MXN)</label><input id="ret-afore" type="number" placeholder="100,000" value="100000"></div>
-        <button class="calc-btn" onclick="calcRetiro()">Calcular</button>
-        <div class="calc-result" id="r-ret">
-          <div class="calc-result-num" id="r-ret-num"></div>
-          <div class="calc-result-label">Meta de ahorro para el retiro</div>
-          <div class="calc-result-detail" id="r-ret-detail"></div>
-        </div>
+        <div class="calc-card-title">Calculadora de retiro</div>
+        <div class="calc-card-sub">¿Cuánto necesitas para jubilarte tranquilo?</div>
+        <div class="calc-row"><label>Tu edad actual</label><input id="ret-edad" type="number" value="30"></div>
+        <div class="calc-row"><label>Edad de retiro deseada</label><input id="ret-meta" type="number" value="65"></div>
+        <div class="calc-row"><label>Gasto mensual en retiro (MXN)</label><input id="ret-gasto" type="number" value="20000"></div>
+        <div class="calc-row"><label>Ahorro actual en Afore (MXN)</label><input id="ret-afore" type="number" value="100000"></div>
+        <button class="calc-submit" onclick="calcRetiro()">Calcular</button>
+        <div class="calc-result" id="r-ret"><div class="calc-result-num" id="r-ret-num"></div><div class="calc-result-label">Meta de ahorro para el retiro</div><div class="calc-result-detail" id="r-ret-detail"></div></div>
       </div>
-
     </div>
-  </div>
 
-  <!-- PORTAFOLIOS MODELO -->
-  <div class="edu-section">
-    <div class="edu-section-title">📁 Portafolios modelo</div>
-    <div class="edu-section-sub">Ejemplos de cómo distribuir tu dinero según tu perfil de riesgo</div>
+    <div class="edu-section-h"><h2>Portafolios modelo</h2><p>Ejemplos de cómo distribuir tu dinero según tu perfil</p></div>
     <div class="port-grid">
-
       <div class="port-card">
-        <div class="port-header">
-          <div class="port-icon" style="background:#E1F5EE">🐢</div>
-          <div><div class="port-name">Conservador</div><div class="port-desc">Bajo riesgo · Rendimiento estable</div></div>
-        </div>
-        <div class="port-bar"><div class="port-bar-label"><span>CETES / Deuda gobierno</span><span style="color:#1D9E75;font-weight:600">50%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:50%;background:#1D9E75"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>Fondos de deuda corporativa</span><span style="color:#185FA5;font-weight:600">25%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:25%;background:#185FA5"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>ETFs de renta variable MX</span><span style="color:#854F0B;font-weight:600">15%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:15%;background:#854F0B"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>Oro / Commodities</span><span style="color:#534AB7;font-weight:600">10%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:10%;background:#534AB7"></div></div></div>
-        <div class="port-stats">
-          <div><div class="port-stat-n" style="color:#1D9E75">8-10%</div><div class="port-stat-l">Rendimiento anual est.</div></div>
-          <div><div class="port-stat-n" style="color:#A32D2D">Bajo</div><div class="port-stat-l">Nivel de riesgo</div></div>
-          <div><div class="port-stat-n">Cualquier</div><div class="port-stat-l">Horizonte de inversión</div></div>
-          <div><div class="port-stat-n">$5,000+</div><div class="port-stat-l">Capital mínimo sugerido</div></div>
-        </div>
+        <div class="port-icon">🐢</div>
+        <div class="port-name">Conservador</div>
+        <div class="port-desc">Bajo riesgo · Rendimiento estable</div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>CETES / Deuda gobierno</span><span style="color:var(--g);font-weight:600">50%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:50%;background:#1D9E75"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>Deuda corporativa</span><span style="color:#185FA5;font-weight:600">25%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:25%;background:#185FA5"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>ETFs renta variable MX</span><span style="color:#854F0B;font-weight:600">15%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:15%;background:#854F0B"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>Oro / Commodities</span><span style="color:#534AB7;font-weight:600">10%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:10%;background:#534AB7"></div></div></div>
+        <div class="port-stats"><div><div class="port-stat-n" style="color:var(--g)">8-10%</div><div class="port-stat-l">Rendimiento anual est.</div></div><div><div class="port-stat-n" style="color:var(--red)">Bajo</div><div class="port-stat-l">Nivel de riesgo</div></div></div>
       </div>
-
-      <div class="port-card" style="border-color:#1D9E75">
-        <div style="font-size:10px;font-weight:600;color:#fff;background:#1D9E75;padding:3px 10px;border-radius:20px;width:fit-content;margin-bottom:12px;letter-spacing:.04em">MÁS POPULAR</div>
-        <div class="port-header">
-          <div class="port-icon" style="background:#E6F1FB">⚖️</div>
-          <div><div class="port-name">Moderado</div><div class="port-desc">Riesgo medio · Crecimiento equilibrado</div></div>
-        </div>
-        <div class="port-bar"><div class="port-bar-label"><span>ETFs globales (S&P 500, NASDAQ)</span><span style="color:#185FA5;font-weight:600">35%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:35%;background:#185FA5"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>CETES / Deuda</span><span style="color:#1D9E75;font-weight:600">30%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:30%;background:#1D9E75"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>Acciones BMV (IPC)</span><span style="color:#854F0B;font-weight:600">20%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:20%;background:#854F0B"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>FIBRAs / Bienes raíces</span><span style="color:#534AB7;font-weight:600">15%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:15%;background:#534AB7"></div></div></div>
-        <div class="port-stats">
-          <div><div class="port-stat-n" style="color:#1D9E75">12-15%</div><div class="port-stat-l">Rendimiento anual est.</div></div>
-          <div><div class="port-stat-n" style="color:#854F0B">Medio</div><div class="port-stat-l">Nivel de riesgo</div></div>
-          <div><div class="port-stat-n">3-5 años</div><div class="port-stat-l">Horizonte recomendado</div></div>
-          <div><div class="port-stat-n">$20,000+</div><div class="port-stat-l">Capital mínimo sugerido</div></div>
-        </div>
+      <div class="port-card featured">
+        <div class="port-badge">MÁS POPULAR</div>
+        <div class="port-icon">⚖️</div>
+        <div class="port-name">Moderado</div>
+        <div class="port-desc">Riesgo medio · Crecimiento equilibrado</div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>ETFs globales (S&P 500)</span><span style="color:#185FA5;font-weight:600">35%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:35%;background:#185FA5"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>CETES / Deuda</span><span style="color:var(--g);font-weight:600">30%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:30%;background:#1D9E75"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>Acciones BMV</span><span style="color:#854F0B;font-weight:600">20%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:20%;background:#854F0B"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>FIBRAs / Bienes raíces</span><span style="color:#534AB7;font-weight:600">15%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:15%;background:#534AB7"></div></div></div>
+        <div class="port-stats"><div><div class="port-stat-n" style="color:var(--g)">12-15%</div><div class="port-stat-l">Rendimiento anual est.</div></div><div><div class="port-stat-n" style="color:#854F0B">Medio</div><div class="port-stat-l">Nivel de riesgo</div></div></div>
       </div>
-
       <div class="port-card">
-        <div class="port-header">
-          <div class="port-icon" style="background:#FCEBEB">🚀</div>
-          <div><div class="port-name">Agresivo</div><div class="port-desc">Alto riesgo · Máximo crecimiento</div></div>
-        </div>
-        <div class="port-bar"><div class="port-bar-label"><span>ETFs tecnología / crecimiento</span><span style="color:#185FA5;font-weight:600">40%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:40%;background:#185FA5"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>Acciones individuales</span><span style="color:#A32D2D;font-weight:600">25%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:25%;background:#A32D2D"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>Crypto (BTC, ETH)</span><span style="color:#854F0B;font-weight:600">20%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:20%;background:#854F0B"></div></div></div>
-        <div class="port-bar"><div class="port-bar-label"><span>CETES (colchón)</span><span style="color:#1D9E75;font-weight:600">15%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:15%;background:#1D9E75"></div></div></div>
-        <div class="port-stats">
-          <div><div class="port-stat-n" style="color:#1D9E75">20%+</div><div class="port-stat-l">Rendimiento anual est.</div></div>
-          <div><div class="port-stat-n" style="color:#A32D2D">Alto</div><div class="port-stat-l">Nivel de riesgo</div></div>
-          <div><div class="port-stat-n">5-10 años</div><div class="port-stat-l">Horizonte recomendado</div></div>
-          <div><div class="port-stat-n">$50,000+</div><div class="port-stat-l">Capital mínimo sugerido</div></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- GUÍAS -->
-  <div class="edu-section">
-    <div class="edu-section-title">📚 Guías financieras</div>
-    <div class="edu-section-sub">Aprende a tu ritmo — de lo básico a lo avanzado</div>
-    <div class="edu-grid">
-
-      <div class="edu-card" onclick="openEduModal('cetes')">
-        <div class="edu-icon" style="background:#E1F5EE">💰</div>
-        <span class="edu-tag edu-lv1">Principiante</span>
-        <h3>Cómo invertir en CETES desde $100</h3>
-        <p>Todo lo que necesitas saber para empezar a invertir en los instrumentos más seguros de México sin complicaciones.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('presupuesto')">
-        <div class="edu-icon" style="background:#E6F1FB">📋</div>
-        <span class="edu-tag edu-lv1">Principiante</span>
-        <h3>Cómo hacer tu presupuesto personal con la regla 50/30/20</h3>
-        <p>La regla más simple y efectiva para organizar tus finanzas personales sin necesitar ser experto en números.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('etfs')">
-        <div class="edu-icon" style="background:#FAEEDA">📊</div>
-        <span class="edu-tag edu-lv2">Intermedio</span>
-        <h3>ETFs en México: la guía completa para inversores</h3>
-        <p>Qué son los fondos indexados, cómo comprarlos desde México, cuáles tienen mejores rendimientos y cómo pagar impuestos.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('deudas')">
-        <div class="edu-icon" style="background:#FCEBEB">💳</div>
-        <span class="edu-tag edu-lv1">Principiante</span>
-        <h3>Cómo salir de deudas y no volver a caer en ellas</h3>
-        <p>Estrategias probadas para liquidar tarjetas de crédito, préstamos personales y deudas del SAT sin desesperarte.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('fibras')">
-        <div class="edu-icon" style="background:#EEEDFE">🏢</div>
-        <span class="edu-tag edu-lv2">Intermedio</span>
-        <h3>FIBRAs: cómo invertir en bienes raíces desde $500 pesos</h3>
-        <p>Los fideicomisos de inversión en bienes raíces te permiten ser dueño de centros comerciales, oficinas y bodegas sin comprar un inmueble.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('afore')">
-        <div class="edu-icon" style="background:#E1F5EE">🏖️</div>
-        <span class="edu-tag edu-lv1">Principiante</span>
-        <h3>Afore: todo lo que nadie te explicó sobre tu retiro</h3>
-        <p>Cómo revisar tu saldo, cambiar de afore, hacer aportaciones voluntarias y maximizar tu pensión cuando llegue el momento.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('crypto')">
-        <div class="edu-icon" style="background:#FAEEDA">₿</div>
-        <span class="edu-tag edu-lv2">Intermedio</span>
-        <h3>Crypto en México: cómo comprar, vender y pagar impuestos</h3>
-        <p>Todo lo que necesitas saber sobre Bitcoin, Ethereum y las principales criptomonedas — incluyendo tus obligaciones con el SAT.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('empresa')">
-        <div class="edu-icon" style="background:#E6F1FB">🏭</div>
-        <span class="edu-tag edu-lv2">Empresas</span>
-        <h3>Finanzas para PyMEs: flujo de caja, crédito y crecimiento</h3>
-        <p>Los conceptos financieros clave que todo dueño de negocio debe dominar para tomar mejores decisiones y crecer de forma sostenida.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-      <div class="edu-card" onclick="openEduModal('sat')">
-        <div class="edu-icon" style="background:#FCEBEB">🧾</div>
-        <span class="edu-tag edu-lv3">Avanzado</span>
-        <h3>SAT para personas físicas: deduce más y paga menos impuestos</h3>
-        <p>Deducciones personales, comprobantes fiscales, declaración anual y todo lo que puedes hacer legalmente para reducir tu carga fiscal.</p>
-        <div class="edu-arrow">Leer guía <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- TIPS RÁPIDOS -->
-  <div class="edu-section">
-    <div class="edu-section-title">⚡ Tips financieros rápidos</div>
-    <div class="edu-section-sub">Reglas de oro que todo mexicano debería conocer</div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:40px">
-      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">💡</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">Regla del 50/30/20</div><div style="font-size:12px;color:var(--t2);line-height:1.55">50% para necesidades, 30% para gustos, 20% para ahorro e inversión. Si no puedes ahorrar el 20%, empieza con el 5% y aumenta cada mes.</div></div>
-      </div>
-      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">🚨</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">El CAT de las tarjetas de crédito</div><div style="font-size:12px;color:var(--t2);line-height:1.55">El Costo Anual Total promedio de tarjetas en México es 40%. Si debes $10,000 y pagas solo el mínimo, pagarás más de $30,000 en total.</div></div>
-      </div>
-      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">📈</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">Invierte antes de gastar</div><div style="font-size:12px;color:var(--t2);line-height:1.55">Automatiza tu ahorro el mismo día que recibes tu quincena. El dinero que no ves, no se gasta. Así funciona el ahorro forzoso.</div></div>
-      </div>
-      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">🏦</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">CETES vs cuenta de ahorro</div><div style="font-size:12px;color:var(--t2);line-height:1.55">Las cuentas de ahorro bancarias pagan entre 3-6% anual. Los CETES pagan 11.2%. En $100,000, la diferencia es de $5,000 al año.</div></div>
-      </div>
-      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">⏰</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">El tiempo es tu mejor aliado</div><div style="font-size:12px;color:var(--t2);line-height:1.55">$1,000 al mes durante 30 años al 10% anual = $2.2 millones. El mismo dinero durante 20 años = $760,000. Empieza hoy.</div></div>
-      </div>
-      <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">🏢</div>
-        <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px">Para dueños de negocio</div><div style="font-size:12px;color:var(--t2);line-height:1.55">Separa siempre tus finanzas personales de las del negocio. Una cuenta bancaria empresarial y contabilidad básica pueden salvarte de quiebras innecesarias.</div></div>
+        <div class="port-icon">🚀</div>
+        <div class="port-name">Agresivo</div>
+        <div class="port-desc">Alto riesgo · Máximo crecimiento</div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>ETFs tecnología</span><span style="color:#185FA5;font-weight:600">40%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:40%;background:#185FA5"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>Acciones individuales</span><span style="color:var(--red);font-weight:600">25%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:25%;background:#A32D2D"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>Crypto (BTC, ETH)</span><span style="color:#854F0B;font-weight:600">20%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:20%;background:#854F0B"></div></div></div>
+        <div class="port-bar-row"><div class="port-bar-label"><span>CETES (colchón)</span><span style="color:var(--g);font-weight:600">15%</span></div><div class="port-bar-track"><div class="port-bar-fill" style="width:15%;background:#1D9E75"></div></div></div>
+        <div class="port-stats"><div><div class="port-stat-n" style="color:var(--g)">20%+</div><div class="port-stat-l">Rendimiento anual est.</div></div><div><div class="port-stat-n" style="color:var(--red)">Alto</div><div class="port-stat-l">Nivel de riesgo</div></div></div>
       </div>
     </div>
-  </div>
 
-</div>
-</div>
+    <div class="edu-section-h"><h2>Guías financieras</h2><p>Aprende a tu ritmo — de lo básico a lo avanzado</p></div>
+    <div class="guides-grid" id="guides-grid"></div>
 
-<!-- EDUCATION MODAL -->
-<div class="mo" id="m-edu" onclick="if(event.target===this)closeEdu()">
-  <div class="modal" style="max-width:680px">
-    <div class="mh" id="edu-hero" style="background:linear-gradient(150deg,#085041 0%,#1D9E75 60%,#5DCAA5 100%)"></div>
-    <button class="cbtn" onclick="closeEdu()">✕</button>
-    <div class="mb"><div class="mm" id="edu-meta"></div><div class="art" id="edu-body"></div></div>
+    <div class="edu-section-h"><h2>Tips financieros rápidos</h2><p>Reglas de oro que todo mexicano debería conocer</p></div>
+    <div class="tips-grid">
+      <div class="tip-card"><div class="tip-emoji">💡</div><div><div class="tip-title">Regla del 50/30/20</div><div class="tip-text">50% necesidades, 30% gustos, 20% ahorro e inversión. Si no puedes ahorrar el 20%, empieza con el 5% y aumenta cada mes.</div></div></div>
+      <div class="tip-card"><div class="tip-emoji">🚨</div><div><div class="tip-title">El CAT de las tarjetas de crédito</div><div class="tip-text">El Costo Anual Total promedio de tarjetas en México es 40%. Si debes $10,000 y pagas solo el mínimo, pagarás más de $30,000 en total.</div></div></div>
+      <div class="tip-card"><div class="tip-emoji">📈</div><div><div class="tip-title">Invierte antes de gastar</div><div class="tip-text">Automatiza tu ahorro el mismo día que recibes tu quincena. El dinero que no ves, no se gasta. Así funciona el ahorro forzoso.</div></div></div>
+      <div class="tip-card"><div class="tip-emoji">🏦</div><div><div class="tip-title">CETES vs cuenta de ahorro</div><div class="tip-text">Las cuentas bancarias pagan 3-6% anual. Los CETES pagan 11.2%. En $100,000, la diferencia es de $5,000 al año.</div></div></div>
+      <div class="tip-card"><div class="tip-emoji">⏰</div><div><div class="tip-title">El tiempo es tu mejor aliado</div><div class="tip-text">$1,000 al mes durante 30 años al 10% anual = $2.2 millones. El mismo dinero durante 20 años = $760,000. Empieza hoy.</div></div></div>
+      <div class="tip-card"><div class="tip-emoji">🏢</div><div><div class="tip-title">Para dueños de negocio</div><div class="tip-text">Separa siempre tus finanzas personales de las del negocio. Una cuenta bancaria empresarial puede salvarte de quiebras innecesarias.</div></div></div>
+    </div>
   </div>
 </div>
 
-<!-- DIRECTORIO -->
+<!-- ═══════════════════════════════════ DIRECTORIO ═══════════════════════════════════ -->
 <div class="page" id="page-directorio">
-<div class="wrap">
-  <div class="dh">
+  <div class="dir-hero">
     <h1>Directorio de negocios</h1>
-    <p>Empresas y profesionistas recomendados por la comunidad VisorFinanciero. Todos los giros, en un solo lugar.</p>
-    <div class="ds">
-      <input type="text" placeholder="Buscar empresa, servicio o giro..." id="biz-search" oninput="filterBiz()">
-      <select id="biz-cat" onchange="filterBiz()">
-        <option value="">Todos los giros</option>
-        <option>Finanzas</option><option>Inmobiliaria</option><option>Tecnología</option>
-        <option>Alimentos</option><option>Salud</option><option>Legal</option>
-        <option>Educación</option><option>Comercio</option>
-      </select>
+    <p>Empresas y profesionistas recomendados por la comunidad VisorFinanciero</p>
+    <div class="dir-cats">
+      <div class="dir-cat active" onclick="filterBiz(this,'todos')">Todos</div>
+      <div class="dir-cat" onclick="filterBiz(this,'Finanzas')">Finanzas</div>
+      <div class="dir-cat" onclick="filterBiz(this,'Comercio')">Comercio</div>
+      <div class="dir-cat" onclick="filterBiz(this,'Tecnología')">Tecnología</div>
+      <div class="dir-cat" onclick="filterBiz(this,'Salud')">Salud</div>
+      <div class="dir-cat" onclick="filterBiz(this,'Legal')">Legal</div>
     </div>
   </div>
-  <div class="cf" id="chips">
-    <span class="chip active" onclick="setCat(this,'')">Todos</span>
-    <span class="chip" onclick="setCat(this,'Finanzas')">💼 Finanzas</span>
-    <span class="chip" onclick="setCat(this,'Inmobiliaria')">🏠 Inmobiliaria</span>
-    <span class="chip" onclick="setCat(this,'Tecnología')">💻 Tecnología</span>
-    <span class="chip" onclick="setCat(this,'Alimentos')">🍽️ Alimentos</span>
-    <span class="chip" onclick="setCat(this,'Salud')">❤️ Salud</span>
-    <span class="chip" onclick="setCat(this,'Legal')">⚖️ Legal</span>
-    <span class="chip" onclick="setCat(this,'Educación')">🎓 Educación</span>
-    <span class="chip" onclick="setCat(this,'Comercio')">🛒 Comercio</span>
-  </div>
-  <div class="bg" id="biz-grid"></div>
-  <div style="text-align:center;padding:16px 0 40px">
-    <p style="font-size:14px;color:var(--t2);margin-bottom:14px">¿Tu empresa no aparece aquí?</p>
-    <button class="btn-a" style="margin:0 auto" onclick="showPage('anunciate')">Publicar mi negocio →</button>
-  </div>
-</div>
-</div>
 
-<!-- ANÚNCIATE -->
-<div class="page" id="page-anunciate">
-<div class="wrap">
-  <div class="anh">
-    <h1>Llega a la audiencia correcta</h1>
-    <p>Miles de lectores mexicanos interesados en finanzas, inversión y negocios visitan VisorFinanciero cada mes.</p>
-    <div class="sr">
-      <div><div class="sn">18k+</div><div class="sl2">Lectores mensuales</div></div>
-      <div><div class="sn">62%</div><div class="sl2">Son dueños de negocio</div></div>
-      <div><div class="sn">4.2 min</div><div class="sl2">Tiempo en sitio</div></div>
-      <div><div class="sn">YouTube</div><div class="sl2">Canal activo con Shorts</div></div>
-    </div>
-  </div>
-  <div class="planes">
-    <div class="pc">
-      <div class="pn">Básico</div>
-      <div class="pp">$299 <span>MXN/mes</span></div>
-      <div class="pd">Para negocios locales que quieren visibilidad básica en el directorio.</div>
-      <ul class="pf">
-        <li><span class="ck">✓</span> Perfil en el directorio</li>
-        <li><span class="ck">✓</span> Nombre, logo y descripción</li>
-        <li><span class="ck">✓</span> Enlace a tu sitio web</li>
-        <li><span class="ck">✓</span> Número de contacto</li>
-        <li><span class="cx">—</span><span style="color:var(--t3)">Apariciones entre noticias</span></li>
-        <li><span class="cx">—</span><span style="color:var(--t3)">Destacado en directorio</span></li>
-        <li><span class="cx">—</span><span style="color:var(--t3)">Estadísticas de visitas</span></li>
-      </ul>
-      <button class="pbtn pbtn-o" onclick="selPlan('Básico')">Empezar →</button>
-    </div>
-    <div class="pc dest">
-      <div class="pop">Más popular</div>
-      <div class="pn">Pro</div>
-      <div class="pp">$699 <span>MXN/mes</span></div>
-      <div class="pd">Para negocios que quieren visibilidad y aparecer junto a las noticias.</div>
-      <ul class="pf">
-        <li><span class="ck">✓</span> Todo lo del plan Básico</li>
-        <li><span class="ck">✓</span><strong>Aparición entre noticias</strong></li>
-        <li><span class="ck">✓</span> Destacado en directorio</li>
-        <li><span class="ck">✓</span> Estadísticas básicas</li>
-        <li><span class="ck">✓</span> Hasta 3 fotos</li>
-        <li><span class="cx">—</span><span style="color:var(--t3)">Mención en newsletter</span></li>
-        <li><span class="cx">—</span><span style="color:var(--t3)">Aparición en YouTube</span></li>
-      </ul>
-      <button class="pbtn pbtn-g" onclick="selPlan('Pro')">Empezar →</button>
-    </div>
-    <div class="pc">
-      <div class="pn">Premium</div>
-      <div class="pp">$1,499 <span>MXN/mes</span></div>
-      <div class="pd">Para negocios que quieren máxima exposición en todos los canales.</div>
-      <ul class="pf">
-        <li><span class="ck">✓</span> Todo lo del plan Pro</li>
-        <li><span class="ck">✓</span><strong>Mención en newsletter semanal</strong></li>
-        <li><span class="ck">✓</span><strong>Mención en 1 Short YouTube/mes</strong></li>
-        <li><span class="ck">✓</span> Posición prioritaria</li>
-        <li><span class="ck">✓</span> Estadísticas detalladas</li>
-        <li><span class="ck">✓</span> Hasta 8 fotos</li>
-        <li><span class="ck">✓</span> Soporte por WhatsApp</li>
-      </ul>
-      <button class="pbtn pbtn-p" onclick="selPlan('Premium')">Empezar →</button>
-    </div>
-  </div>
-  <div class="gar">🔒 <strong>Sin contratos largos.</strong> Cancela cuando quieras. Pago mensual. Activación en menos de 24 horas hábiles.</div>
-  <div class="cform">
-    <h2>Publica tu negocio hoy</h2>
-    <p class="sub">Completa el formulario y te contactamos en menos de 24 horas.</p>
-    <div class="fr">
-      <div class="fg"><label>Nombre de tu negocio *</label><input id="f-neg" type="text" placeholder="Ej. Contaduría Ramírez"></div>
-      <div class="fg"><label>Tu nombre *</label><input id="f-nom" type="text" placeholder="Nombre completo"></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Email de contacto *</label><input id="f-email" type="email" placeholder="hola@minegocio.com"></div>
-      <div class="fg"><label>WhatsApp</label><input id="f-wa" type="tel" placeholder="+52 55 0000 0000"></div>
-    </div>
-    <div class="fr">
-      <div class="fg"><label>Giro de tu negocio</label>
-        <select id="f-giro"><option value="">Selecciona un giro</option><option>Finanzas y contabilidad</option><option>Bienes raíces</option><option>Tecnología</option><option>Alimentos y restaurantes</option><option>Salud y bienestar</option><option>Legal y notaría</option><option>Educación</option><option>Comercio</option><option>Otro</option></select>
+  <div class="dir-wrap">
+    <div class="dir-grid" id="dir-grid"></div>
+
+    <!-- ANÚNCIATE — integrado -->
+    <div class="anun-section">
+      <div class="anun-title">Llega a miles de lectores</div>
+      <div class="anun-sub">Publica tu negocio en VisorFinanciero y aparece entre las noticias que leen emprendedores e inversores mexicanos.</div>
+      <div class="planes-grid">
+        <div class="plan-card">
+          <div class="plan-name">Básico</div>
+          <div class="plan-price">$299 <span class="plan-period">MXN/mes</span></div>
+          <div class="plan-feats">
+            <div class="plan-feat">Perfil en el directorio</div>
+            <div class="plan-feat">Nombre, logo y descripción</div>
+            <div class="plan-feat">Enlace y número de contacto</div>
+            <div class="plan-feat no">Apariciones entre noticias</div>
+            <div class="plan-feat no">Mención en newsletter</div>
+          </div>
+          <button class="plan-btn" onclick="document.getElementById('anun-form').scrollIntoView({behavior:'smooth'})">Empezar →</button>
+        </div>
+        <div class="plan-card featured">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$699 <span class="plan-period">MXN/mes</span></div>
+          <div class="plan-feats">
+            <div class="plan-feat">Todo lo del plan Básico</div>
+            <div class="plan-feat">Aparición entre noticias</div>
+            <div class="plan-feat">Destacado en directorio</div>
+            <div class="plan-feat">Estadísticas básicas</div>
+            <div class="plan-feat no">Mención en YouTube</div>
+          </div>
+          <button class="plan-btn" onclick="document.getElementById('anun-form').scrollIntoView({behavior:'smooth'})">Empezar →</button>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">$1,499 <span class="plan-period">MXN/mes</span></div>
+          <div class="plan-feats">
+            <div class="plan-feat">Todo lo del plan Pro</div>
+            <div class="plan-feat">Mención en newsletter</div>
+            <div class="plan-feat">Mención en 1 Short/mes</div>
+            <div class="plan-feat">Posición prioritaria</div>
+            <div class="plan-feat">Soporte por WhatsApp</div>
+          </div>
+          <button class="plan-btn" onclick="document.getElementById('anun-form').scrollIntoView({behavior:'smooth'})">Empezar →</button>
+        </div>
       </div>
-      <div class="fg"><label>Plan de interés</label>
-        <select id="f-plan"><option>Básico — $299/mes</option><option selected>Pro — $699/mes</option><option>Premium — $1,499/mes</option></select>
+
+      <div class="anun-form" id="anun-form">
+        <div class="anun-form-title">Publica tu negocio hoy</div>
+        <div class="form-row"><label>Nombre de tu negocio *</label><input type="text" placeholder="Ej: Galpon Empaques S.A. de C.V."></div>
+        <div class="form-row"><label>Tu nombre *</label><input type="text" placeholder="Tu nombre completo"></div>
+        <div class="form-row"><label>Email de contacto *</label><input type="email" placeholder="correo@empresa.com"></div>
+        <div class="form-row"><label>WhatsApp</label><input type="tel" placeholder="+52 55 1234 5678"></div>
+        <div class="form-row"><label>Giro de tu negocio</label>
+          <select><option value="">Selecciona un giro</option><option>Finanzas y contabilidad</option><option>Comercio</option><option>Tecnología</option><option>Salud</option><option>Legal</option><option>Educación</option><option>Otro</option></select>
+        </div>
+        <div class="form-row"><label>Plan de interés</label>
+          <select><option>Básico — $299/mes</option><option selected>Pro — $699/mes</option><option>Premium — $1,499/mes</option></select>
+        </div>
+        <div class="form-row"><label>Describe brevemente tu negocio</label><textarea rows="3" placeholder="¿Qué haces y a quién le sirves?"></textarea></div>
+        <button class="form-submit">Enviar solicitud</button>
       </div>
     </div>
-    <div class="fg"><label>Describe brevemente tu negocio</label><textarea id="f-desc" placeholder="¿Qué ofreces? ¿A quién va dirigido?"></textarea></div>
-    <button class="fsub" onclick="submitForm()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-      Enviar solicitud
-    </button>
   </div>
-  <div style="margin-bottom:48px">
-    <div class="sh"><span class="sl">Preguntas frecuentes</span><div class="sln"></div></div>
-    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Cuánto tarda en activarse mi perfil? <span>+</span></button><div class="faq-a">Tu perfil se activa en menos de 24 horas hábiles una vez confirmado el pago.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Puedo cambiar de plan después? <span>+</span></button><div class="faq-a">Sí, puedes subir o bajar de plan en cualquier momento. Los cambios aplican en el siguiente ciclo.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Qué tipo de negocios pueden anunciarse? <span>+</span></button><div class="faq-a">Cualquier negocio legal: contadores, restaurantes, inmobiliarias, tiendas, escuelas, clínicas, despachos legales, servicios digitales, etc.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona la mención en YouTube (plan Premium)? <span>+</span></button><div class="faq-a">Una vez al mes incluimos una mención breve de tu negocio en uno de nuestros Shorts. Te avisamos con anticipación para que apruebes el mensaje.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Cómo se realiza el pago? <span>+</span></button><div class="faq-a">Aceptamos transferencia bancaria (SPEI), tarjeta de crédito/débito y CoDi.</div></div>
-  </div>
-</div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="fi">
-    <span class="fc">© 2024 VisorFinanciero — Noticias financieras para México</span>
-    <div class="fls">
-      <span class="fl" onclick="showPage('anunciate')">Anúnciate</span>
-      <span class="fl" onclick="showPage('directorio')">Directorio</span>
-      <span class="fl">Privacidad</span>
-      <span class="fl">Contacto</span>
+  <div class="footer-inner">
+    <div class="footer-logo">VisorFinanciero</div>
+    <div class="footer-links">
+      <div class="footer-link" onclick="showPage('inicio')">Inicio</div>
+      <div class="footer-link" onclick="showPage('educacion')">Educación</div>
+      <div class="footer-link" onclick="showPage('directorio')">Directorio</div>
+      <a href="https://www.youtube.com/@MercadoAlDesnudo" target="_blank" class="footer-link">YouTube</a>
     </div>
+    <div class="footer-copy">© 2025 VisorFinanciero · @MercadoAlDesnudo</div>
   </div>
 </footer>
 
-<!-- ARTICLE MODAL -->
-<div class="mo" id="m-art" onclick="closeAll(event)">
-  <div class="modal">
-    <div class="mh" id="art-hero" style="background:linear-gradient(150deg,#085041 0%,#1D9E75 60%,#5DCAA5 100%)"></div>
-    <button class="cbtn" onclick="closeArt()">✕</button>
-    <div class="mb"><div class="mm" id="art-meta"></div><div class="art" id="art-body"></div></div>
-  </div>
-</div>
-
-<!-- BIZ MODAL -->
-<div class="mo" id="m-biz" onclick="closeAll(event)">
-  <div class="bmod">
-    <button class="cbtn" style="background:rgba(0,0,0,.08);border-color:var(--b);color:var(--t);top:14px;right:14px" onclick="closeBiz()">✕</button>
-    <div class="bmh" id="bm-head"></div>
-    <div class="bmb" id="bm-body"></div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script>
-// ── CONFIG ──
+// ── DATA ──
 const SHEET_ID = '11nrbsqlPji_M4jcPmmeWcZ8qklsJYVQncJPIVIjWgaY';
-
-// ── HELPERS ──
-function timeAgo(d) {
-  try {
-    const date = new Date(d);
-    if (isNaN(date)) return 'Reciente';
-    const diff = Math.floor((Date.now() - date) / 60000);
-    if (diff < 1) return 'Hace un momento';
-    if (diff < 60) return `Hace ${diff} min`;
-    if (diff < 1440) return `Hace ${Math.floor(diff/60)}h`;
-    return `Hace ${Math.floor(diff/1440)} días`;
-  } catch(e) { return 'Reciente'; }
-}
-
-function readTime(txt) {
-  if (!txt) return '3 min';
-  const w = txt.replace(/<[^>]+>/g,' ').split(/\s+/).filter(Boolean).length;
-  return `${Math.max(2, Math.round(w/200))} min`;
-}
-
-function clean(txt) {
-  if (!txt) return '';
-  return txt.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
-}
-
-// ── DYNAMIC ARTICLES ──
 const dynArts = {};
-const tagColors = ['tg','tr','tb','ta','tp'];
 const tagNames = ['Economía','Mercados','Internacional','Finanzas','Análisis'];
+const tagClasses = ['tag-eco','tag-mkt','tag-int','tag-fin','tag-ana'];
+const tagAccents = ['#1D9E75','#A32D2D','#185FA5','#854F0B','#534AB7'];
 let heroData = null;
 
+// ── UTILS ──
+function timeAgo(d) {
+  if (!d) return 'Ahora';
+  const s = typeof d === 'string' ? d.replace('Date(','').replace(')','').split(',') : null;
+  let date;
+  if (s && s.length >= 3) date = new Date(+s[0],+s[1],+s[2],s[3]?+s[3]:0,s[4]?+s[4]:0);
+  else date = new Date(d);
+  if (isNaN(date)) return 'Ahora';
+  const diff = (Date.now() - date) / 60000;
+  if (diff < 1) return 'Ahora mismo';
+  if (diff < 60) return `hace ${Math.floor(diff)} min`;
+  if (diff < 1440) return `hace ${Math.floor(diff/60)}h`;
+  return `hace ${Math.floor(diff/1440)} días`;
+}
+function readTime(txt) {
+  if (!txt) return '3 min';
+  return Math.max(2, Math.ceil(txt.split(' ').length / 200)) + ' min';
+}
+function clean(txt) {
+  return txt ? txt.replace(/<[^>]+>/g,'').replace(/\n/g,' ') : '';
+}
+
+// ── NAVIGATION ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const nl = document.getElementById('nav-' + name);
+  if (nl) nl.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if (name === 'directorio') renderBiz(bizs);
+}
+
+// ── MODALS ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function openArt(title, meta, body, accentColor) {
+  document.getElementById('modal-art-hero').innerHTML = `<h1>${title}</h1>`;
+  document.getElementById('modal-art-hero').style.background = accentColor || '#04342C';
+  document.getElementById('modal-art-meta').textContent = meta;
+  document.getElementById('modal-art-body').innerHTML = body;
+  openModal('modal-art');
+}
+function openHeroArt() {
+  if (!heroData) return;
+  openArt(heroData.title, heroData.meta, heroData.body);
+}
+function openDyn(id) {
+  const a = dynArts[id];
+  if (!a) return;
+  openArt(a.title, a.meta, a.body);
+}
+
+// ── MATRIX CANVAS ──
+(function(){
+  const canvas = document.getElementById('split-canvas');
+  if (!canvas) return;
+  const hero = canvas.parentElement;
+  canvas.width = hero.offsetWidth;
+  canvas.height = hero.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  const chars = '$0123456789.%+-'.split('');
+  const cols = Math.floor(canvas.width / 20);
+  const drops = Array(cols).fill(1);
+  function draw() {
+    ctx.fillStyle = 'rgba(4,52,44,0.06)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = 'rgba(29,158,117,0.45)';
+    ctx.font = '13px monospace';
+    drops.forEach((y,i) => {
+      if (i * 20 > canvas.width / 2) return;
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*20, y*18);
+      if (y*18 > canvas.height && Math.random() > .94) drops[i] = 0;
+      drops[i]++;
+    });
+  }
+  setInterval(draw, 70);
+})();
+
+// ── MARKET SPARKLINES ──
+function buildSpark(id, bars, up) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = bars.map(b => `<div class="mkt-spark-bar" style="height:${b*2}px;background:${up?'#1D9E75':'#E24B4A'};opacity:.7"></div>`).join('');
+}
+buildSpark('spark-ipc', [4,5,6,5,7,8,9,8,10,10], true);
+buildSpark('spark-usd', [9,8,7,8,6,5,6,5,4,4], false);
+buildSpark('spark-btc', [4,5,6,7,8,7,9,8,10,10], true);
+buildSpark('spark-oro', [5,6,7,6,8,7,8,9,9,9], true);
+
+// ── PRICE FLICKER ──
+const priceEls = [
+  {id:'p-ipc',fw:'fw-ipc',base:52340,big:true},
+  {id:'p-usd',fw:'fw-usd',base:17.24,big:false},
+  {id:'p-btc',fw:'fw-btc',base:68420,big:true},
+  {id:'p-oro',fw:'fw-oro',base:2318,big:true},
+];
+function flickerPrices() {
+  priceEls.forEach(m => {
+    const v = m.base * (1 + (Math.random()-.5) * .0008);
+    const fmt = m.big ? v.toLocaleString('es-MX',{maximumFractionDigits:0}) : v.toFixed(2);
+    const el = document.getElementById(m.id);
+    const fw = document.getElementById(m.fw);
+    if (el) el.textContent = fmt;
+    if (fw) fw.textContent = fmt;
+  });
+}
+setInterval(flickerPrices, 3000);
+
+// ── COUNT UP ──
+function countUp(id, target, suffix, dur) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const s = Date.now();
+  (function tick() {
+    const p = Math.min((Date.now()-s)/dur, 1);
+    const e = 1 - Math.pow(1-p, 4);
+    el.textContent = Math.round(e*target) + (suffix||'');
+    if (p < 1) requestAnimationFrame(tick);
+  })();
+}
+setTimeout(() => { countUp('stat-1',18,'k',1400); countUp('stat-2',142,'',1700); }, 400);
+
+// ── LOAD NEWS FROM SHEETS ──
 async function loadNews() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);
     const txt = await res.text();
-    const json = JSON.parse(txt.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, ''));
+    const json = JSON.parse(txt.replace(/^[^(]+\(/,'').replace(/\);?\s*$/,''));
     const rows = json.table?.rows || [];
 
     if (!rows.length) {
-      document.getElementById('news-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:14px">Aún no hay noticias. El sistema las generará automáticamente en los próximos minutos.</div>';
+      document.getElementById('news-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--t3)">Aún no hay noticias. El sistema las publicará automáticamente.</div>';
       document.getElementById('news-count').textContent = '0 artículos';
       return;
     }
 
     const recent = [...rows].reverse().slice(0, 9);
-
-    // Update hero with latest article
     const top = recent[0];
     const topTitle = top.c[1]?.v || 'Sin título';
     const topBody = top.c[2]?.v || '';
     const topDate = top.c[0]?.v || '';
-    const topIntro = clean(topBody).substring(0, 200) + '...';
 
-    document.getElementById('hero-title').textContent = topTitle;
-    document.getElementById('hero-intro').textContent = topIntro;
-    document.getElementById('hero-ago').textContent = timeAgo(topDate);
-    document.getElementById('hero-read').textContent = readTime(topBody) + ' de lectura';
+    document.getElementById('split-title').textContent = topTitle;
+    document.getElementById('split-excerpt').textContent = clean(topBody).substring(0, 220) + '...';
+    document.getElementById('split-time').textContent = timeAgo(topDate);
+    document.getElementById('split-read').textContent = readTime(topBody) + ' de lectura';
 
     heroData = {
       title: topTitle,
@@ -1058,558 +878,229 @@ async function loadNews() {
       body: topBody ? `<p>${topBody.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>` : '<p>Contenido no disponible.</p>'
     };
 
-    // Side cards
-    const sideColors = ['#1D9E75','#A32D2D','#185FA5','#854F0B'];
-    const sides = recent.slice(1, 5).map((r, i) => {
-      const t = r.c[1]?.v || 'Sin título';
-      const f = r.c[0]?.v || '';
-      const id = `side_${i}`;
-      dynArts[id] = {
-        title: t,
-        meta: `${tagNames[i % tagNames.length]} · ${timeAgo(f)}`,
-        body: r.c[2]?.v ? `<p>${r.c[2].v.replace(/\n\n/g,'</p><p>')}</p>` : '<p>Contenido no disponible.</p>'
-      };
-      return `<div class="sc" onclick="openDyn('${id}')"><div class="sacc" style="background:${sideColors[i%4]}"></div><div><h3>${t}</h3><div class="sm">${tagNames[i%tagNames.length]} · ${timeAgo(f)}</div></div></div>`;
-    }).join('');
-    document.getElementById('hero-sides').innerHTML = sides || '<div style="padding:16px;color:var(--t3);font-size:13px">Cargando...</div>';
+    // Split right news list
+    const cats = ['Mercados','Economía','Inversión','Finanzas'];
+    const newsList = document.getElementById('split-news-list');
+    if (newsList) {
+      newsList.innerHTML = recent.slice(1,5).map((r,i) => {
+        const t = r.c[1]?.v || 'Sin título';
+        const f = r.c[0]?.v || '';
+        const id = `sn_${i}`;
+        dynArts[id] = { title: t, meta: `${cats[i%4]} · ${timeAgo(f)}`, body: r.c[2]?.v ? `<p>${r.c[2].v.replace(/\n\n/g,'</p><p>')}</p>` : '' };
+        return `<div class="news-mini-item" onclick="openDyn('${id}')"><div class="news-mini-dot"></div><div><div class="news-mini-cat">${cats[i%4]}</div><div class="news-mini-title">${t}</div><div class="news-mini-time">${timeAgo(f)}</div></div></div>`;
+      }).join('');
+    }
 
-    // News grid
+    // Main news grid
     let html = '';
-    let artIdx = 0;
+    let idx = 0;
     recent.forEach((r, i) => {
       const title = r.c[1]?.v || 'Sin título';
       const body = r.c[2]?.v || '';
       const date = r.c[0]?.v || '';
       const intro = clean(body).substring(0, 130) + '...';
-      const color = tagColors[artIdx % tagColors.length];
-      const tag = tagNames[artIdx % tagNames.length];
-      const id = `art_${artIdx}`;
+      const tag = tagNames[idx % tagNames.length];
+      const tagCls = tagClasses[idx % tagClasses.length];
+      const accent = tagAccents[idx % tagAccents.length];
+      const id = `art_${idx}`;
+      dynArts[id] = { title, meta: `${tag} · ${readTime(body)} de lectura · ${timeAgo(date)}`, body: body ? `<p>${body.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>` : '' };
 
-      dynArts[id] = {
-        title,
-        meta: `${tag} · ${readTime(body)} de lectura · ${timeAgo(date)}`,
-        body: body ? `<p>${body.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>` : '<p>Contenido no disponible.</p>'
-      };
+      if (i === 2) html += `<div class="ad-card" onclick="openBiz('galpon')"><div class="ad-label">Patrocinado</div><div class="ad-icon">📦</div><div class="ad-name">Galpon Empaques</div><div class="ad-desc">Soluciones de empaque y embalaje para empresas. Romita, Guanajuato.</div><div class="ad-tag">Empaques · Guanajuato</div><div class="ad-cta">Ver perfil →</div></div>`;
 
-      if (i === 2) html += `<div class="nad" onclick="openBiz('galpon')"><span class="nb">Patrocinado</span><div class="bl" style="background:#E1F5EE">📦</div><h3>Galpon Empaques S.A. de C.V.</h3><p>Soluciones de empaque y embalaje para empresas. Romita, Guanajuato.</p><span class="bc">Empaques · Guanajuato</span><button class="acta">Ver perfil →</button></div>`;
-      if (i === 5) html += `<div class="nad" onclick="openBiz('galpon')"><span class="nb">Patrocinado</span><div class="bl" style="background:#E1F5EE">📦</div><h3>Galpon Empaques S.A. de C.V.</h3><p>Empaques y embalajes de calidad para tu negocio. Romita, Guanajuato.</p><span class="bc">Empaques · Guanajuato</span><button class="acta">Ver perfil →</button></div>`;
-
-      html += `<div class="nc" onclick="openDyn('${id}')"><span class="nt ${color}">${tag}</span><h3>${title}</h3><p>${intro}</p><div class="nf"><span>${timeAgo(date)} · ${readTime(body)}</span><span class="nr">Leer <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></div>`;
-      artIdx++;
+      html += `<div class="news-card" onclick="openDyn('${id}')"><div class="news-card-accent" style="background:${accent}"></div><div class="news-card-body"><span class="news-card-tag ${tagCls}">${tag}</span><h3 class="news-card-title">${title}</h3><p class="news-card-excerpt">${intro}</p><div class="news-card-footer"><span>${timeAgo(date)} · ${readTime(body)}</span><span class="news-card-read">Leer →</span></div></div></div>`;
+      idx++;
     });
 
     document.getElementById('news-grid').innerHTML = html;
-    document.getElementById('news-count').textContent = `${artIdx} artículos · actualizado ahora`;
-
-  } catch(err) {
-    console.error('Error cargando Sheets:', err);
-    document.getElementById('news-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:14px">Error cargando noticias. Reintentando...</div>';
+    document.getElementById('news-count').textContent = `${idx} artículos · actualizado ahora`;
+    updateFloatingWidget(recent);
+  } catch(e) {
+    console.error(e);
+    document.getElementById('news-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--t3)">Error cargando noticias. Reintentando...</div>';
     setTimeout(loadNews, 30000);
   }
 }
-
-function openHeroArt() {
-  if (!heroData) return;
-  document.getElementById('art-hero').innerHTML = `<h1>${heroData.title}</h1>`;
-  document.getElementById('art-meta').textContent = heroData.meta;
-  document.getElementById('art-body').innerHTML = heroData.body;
-  document.getElementById('m-art').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function openDyn(id) {
-  const a = dynArts[id];
-  if (!a) return;
-  document.getElementById('art-hero').innerHTML = `<h1>${a.title}</h1>`;
-  document.getElementById('art-meta').textContent = a.meta;
-  document.getElementById('art-body').innerHTML = a.body;
-  document.getElementById('m-art').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeArt() { document.getElementById('m-art').classList.remove('open'); document.body.style.overflow = ''; }
-function closeBiz() { document.getElementById('m-biz').classList.remove('open'); document.body.style.overflow = ''; }
-function closeAll(e) { if (e.target.classList.contains('mo')) { closeArt(); closeBiz(); } }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeArt(); closeBiz(); } });
-
-// Load on start and every 5 minutes
 loadNews();
 setInterval(loadNews, 5 * 60 * 1000);
 
-// ── BUSINESSES ──
+// ── DIRECTORIO ──
 const bizs = [
-  {id:'galpon',plan:'pro',cat:'Comercio',e:'📦',bg:'#E1F5EE',name:'Galpon Empaques S.A. de C.V.',giro:'Empaques y embalajes',ciudad:'Romita, Guanajuato',desc:'Empresa especializada en soluciones de empaque y embalaje para empresas de todos los tamaños. Productos de calidad para proteger y presentar tus mercancías.',tags:['Empaques','Embalajes','Cajas','Guanajuato'],rating:'⭐ Verificado',ph:'432 745 3098',web:'layala@galponempaques.com'}
+  {id:'galpon',cat:'Comercio',icon:'📦',bg:'#E1F5EE',name:'Galpon Empaques S.A. de C.V.',giro:'Empaques y embalajes',ciudad:'Romita, Guanajuato',desc:'Empresa especializada en soluciones de empaque y embalaje para empresas de todos los tamaños. Productos de calidad para proteger y presentar tus mercancías.',tags:['Empaques','Embalajes','Cajas'],ph:'432 745 3098',email:'layala@galponempaques.com'}
 ];
 
-let activeCat = '';
-
 function renderBiz(list) {
-  const g = document.getElementById('biz-grid');
-  if (!list.length) { g.innerHTML = '<p style="color:var(--t2);font-size:14px;padding:20px 0">No se encontraron negocios.</p>'; return; }
+  const g = document.getElementById('dir-grid');
+  if (!g) return;
+  if (!list.length) { g.innerHTML = '<div class="biz-empty">No hay negocios en esta categoría.</div>'; return; }
   g.innerHTML = list.map(b => `
-    <div class="bca ${b.plan==='pro'?'pro':b.plan==='premium'?'prem2':''}" onclick="openBiz('${b.id}')">
-      ${b.plan==='pro'?'<span class="pbd bpro">Pro</span>':b.plan==='premium'?'<span class="pbd bprm">Premium</span>':''}
-      <div class="bh"><div class="bav" style="background:${b.bg}">${b.e}</div><div class="bi"><h3>${b.name}</h3><div class="bg2">${b.giro} · ${b.ciudad}</div></div></div>
-      <p class="bd">${b.desc}</p>
-      <div class="btgs">${b.tags.map(t=>`<span class="btg">${t}</span>`).join('')}</div>
-      <div class="bft"><span class="bct">Ver perfil completo →</span><span class="bst">${b.rating}</span></div>
+    <div class="biz-card" onclick="openBiz('${b.id}')">
+      <div class="biz-top" style="background:${b.bg}">${b.icon}</div>
+      <div class="biz-body">
+        <div class="biz-plan">Verificado</div>
+        <div class="biz-name">${b.name}</div>
+        <div class="biz-giro">${b.giro} · ${b.ciudad}</div>
+        <div class="biz-desc">${b.desc}</div>
+        <div class="biz-tags">${b.tags.map(t=>`<span class="biz-tag">${t}</span>`).join('')}</div>
+        <div class="biz-footer">
+          <a href="tel:${b.ph.replace(/\s/g,'')}" class="biz-btn-call" onclick="event.stopPropagation()">📞 Llamar</a>
+          <a href="mailto:${b.email}" class="biz-btn-mail" onclick="event.stopPropagation()">✉️ Correo</a>
+        </div>
+      </div>
     </div>`).join('');
 }
 
-function filterBiz() {
-  const q = document.getElementById('biz-search').value.toLowerCase();
-  const cat = document.getElementById('biz-cat').value || activeCat;
-  renderBiz(bizs.filter(b => (!cat || b.cat === cat) && (!q || b.name.toLowerCase().includes(q) || b.giro.toLowerCase().includes(q))));
-}
-
-function setCat(el, cat) {
-  activeCat = cat;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+function filterBiz(el, cat) {
+  document.querySelectorAll('.dir-cat').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('biz-cat').value = cat;
-  filterBiz();
+  renderBiz(cat === 'todos' ? bizs : bizs.filter(b => b.cat === cat));
 }
 
 function openBiz(id) {
-  const b = bizs.find(x => x.id === id); if (!b) return;
-  document.getElementById('bm-head').innerHTML = `<div class="bmav" style="background:${b.bg}">${b.e}</div><div><h2 style="font-size:17px;font-weight:600;color:var(--t);margin-bottom:4px">${b.name}</h2><p style="font-size:13px;color:var(--t3)">${b.giro} · ${b.ciudad}</p><p style="font-size:12px;color:#1D9E75;margin-top:4px;font-weight:500">${b.rating}</p></div>`;
-  document.getElementById('bm-body').innerHTML = `<p>${b.desc}</p><div class="bdr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.15 1.23 2 2 0 012.13 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>${b.ph}</div><div class="bdr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${b.web}</div><div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${b.tags.map(t=>`<span class="btg">${t}</span>`).join('')}</div><div class="bmca"><a href="tel:${b.ph.replace(/\s/g,'')}" class="bc1">📞 Llamar</a><a href="mailto:${b.web}" class="bc2">✉️ Correo</a></div>`;
-  document.getElementById('m-biz').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  const b = bizs.find(x => x.id === id);
+  if (!b) return;
+  document.getElementById('modal-biz-hero').innerHTML = `<div style="font-size:36px;margin-bottom:12px">${b.icon}</div><h1>${b.name}</h1>`;
+  document.getElementById('modal-biz-hero').style.background = '#04342C';
+  document.getElementById('modal-biz-body').innerHTML = `
+    <p>${b.desc}</p>
+    <p style="font-size:13px;color:var(--t3)">📍 ${b.ciudad}</p>
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+      ${b.tags.map(t=>`<span class="biz-tag">${t}</span>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <a href="tel:${b.ph.replace(/\s/g,'')}" class="biz-btn-call" style="flex:1;text-align:center;padding:10px;display:block">📞 ${b.ph}</a>
+      <a href="mailto:${b.email}" class="biz-btn-mail" style="flex:1;text-align:center;padding:10px;display:block">✉️ Correo</a>
+    </div>`;
+  openModal('modal-biz');
 }
-
-// ── PWA ──
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
-
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const banner = document.getElementById('install-banner');
-  if (banner) banner.style.display = 'flex';
-});
-
-function installApp() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => {
-    deferredPrompt = null;
-    const banner = document.getElementById('install-banner');
-    if (banner) banner.style.display = 'none';
-  });
-}
-
-function closeBanner() {
-  const banner = document.getElementById('install-banner');
-  if (banner) banner.style.display = 'none';
-}
-
-// Handle URL params for shortcuts
-const urlParams = new URLSearchParams(window.location.search);
-const pageParam = urlParams.get('page');
-if (pageParam) showPage(pageParam);
+renderBiz(bizs);
 
 // ── EDUCACIÓN ──
-function calcCetes() {
-  const cap = parseFloat(document.getElementById('c-capital').value) || 0;
-  const tasa = parseFloat(document.getElementById('c-tasa').value) / 100 || 0;
-  const dias = parseInt(document.getElementById('c-plazo').value) || 364;
-  const bruto = cap * tasa * (dias / 365);
-  const isr = bruto * 0.0015;
-  const neto = bruto - isr;
-  const total = cap + neto;
-  const r = document.getElementById('r-cetes');
-  document.getElementById('r-cetes-num').textContent = '$' + neto.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
-  document.getElementById('r-cetes-detail').textContent = `Capital inicial: $${cap.toLocaleString('es-MX')} · Ganancia bruta: $${bruto.toFixed(2)} · ISR estimado: $${isr.toFixed(2)} · Total al vencimiento: $${total.toLocaleString('es-MX', {minimumFractionDigits:2})}`;
-  r.classList.add('show');
+function setEduCat(el, cat) {
+  document.querySelectorAll('.edu-cat').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
 }
 
-function calcIC() {
-  const cap = parseFloat(document.getElementById('ic-capital').value) || 0;
-  const aporte = parseFloat(document.getElementById('ic-aporte').value) || 0;
-  const tasa = parseFloat(document.getElementById('ic-tasa').value) / 100 || 0;
-  const años = parseInt(document.getElementById('ic-años').value) || 10;
-  let total = cap;
-  for (let i = 0; i < años * 12; i++) {
-    total = total * (1 + tasa / 12) + aporte;
-  }
-  const aportado = cap + aporte * años * 12;
-  const ganancia = total - aportado;
-  const r = document.getElementById('r-ic');
-  document.getElementById('r-ic-num').textContent = '$' + Math.round(total).toLocaleString('es-MX');
-  document.getElementById('r-ic-detail').textContent = `Total aportado: $${Math.round(aportado).toLocaleString('es-MX')} · Intereses ganados: $${Math.round(ganancia).toLocaleString('es-MX')} · Tu dinero creció ${Math.round((total/aportado-1)*100)}%`;
-  r.classList.add('show');
-}
-
-function calcFE() {
-  const gasto = parseFloat(document.getElementById('fe-gasto').value) || 0;
-  const meses = parseInt(document.getElementById('fe-meses').value) || 6;
-  const ahorro = parseFloat(document.getElementById('fe-ahorro').value) || 0;
-  const meta = gasto * meses;
-  const tiempo = ahorro > 0 ? Math.ceil(meta / ahorro) : 0;
-  const r = document.getElementById('r-fe');
-  document.getElementById('r-fe-num').textContent = '$' + meta.toLocaleString('es-MX');
-  document.getElementById('r-fe-detail').textContent = `Para ${meses} meses de cobertura necesitas $${meta.toLocaleString('es-MX')}. ${ahorro > 0 ? `Ahorrando $${ahorro.toLocaleString('es-MX')}/mes lo logras en ${tiempo} meses (${(tiempo/12).toFixed(1)} años).` : 'Ingresa tu ahorro mensual para calcular el tiempo.'}`;
-  r.classList.add('show');
-}
-
-function calcRetiro() {
-  const edad = parseInt(document.getElementById('ret-edad').value) || 30;
-  const meta = parseInt(document.getElementById('ret-meta').value) || 65;
-  const gasto = parseFloat(document.getElementById('ret-gasto').value) || 0;
-  const afore = parseFloat(document.getElementById('ret-afore').value) || 0;
-  const años = meta - edad;
-  const esperanza = 85;
-  const añosRetiro = esperanza - meta;
-  const totalNecesario = gasto * 12 * añosRetiro;
-  const faltante = Math.max(0, totalNecesario - afore);
-  const aporteMensual = años > 0 ? faltante / (años * 12) : 0;
-  const r = document.getElementById('r-ret');
-  document.getElementById('r-ret-num').textContent = '$' + Math.round(totalNecesario).toLocaleString('es-MX');
-  document.getElementById('r-ret-detail').textContent = `Para vivir ${añosRetiro} años en retiro con $${gasto.toLocaleString('es-MX')}/mes necesitas $${Math.round(totalNecesario).toLocaleString('es-MX')}. Ya tienes $${afore.toLocaleString('es-MX')} en Afore. Necesitas ahorrar ~$${Math.round(aporteMensual).toLocaleString('es-MX')}/mes durante ${años} años.`;
-  r.classList.add('show');
-}
-
-const eduContent = {
-  cetes: {
-    title: 'Cómo invertir en CETES desde $100',
-    meta: 'Finanzas personales · Nivel: Principiante · 8 min de lectura',
-    body: `<p>Los Certificados de la Tesorería de la Federación (CETES) son el instrumento de inversión más seguro que existe en México, respaldado directamente por el gobierno federal. Puedes empezar con tan solo $100 pesos.</p><h2>¿Qué son exactamente?</h2><p>Son papeles de deuda del gobierno mexicano. Cuando compras CETES, básicamente le prestas dinero al gobierno y él te paga intereses a cambio. El plazo más común es 28 días, pero también existen a 91, 182 y 364 días.</p><h2>Cómo comprarlos paso a paso</h2><p>1. Entra a <strong>cetesdirecto.com</strong> — la plataforma oficial del gobierno, sin intermediarios ni comisiones.<br>2. Crea tu cuenta con CURP, RFC e información bancaria (tarda 10 minutos).<br>3. Transfiere dinero a tu cuenta de CETES directo.<br>4. Elige el monto y plazo, y confirma tu inversión.</p><div class="hl">💡 Con la tasa actual del 11.2% anual, $10,000 en CETES a 364 días generan aproximadamente $1,105 de ganancia neta después de ISR.</div><h2>Impuestos</h2><p>Los CETES retienen automáticamente el ISR correspondiente (0.15% sobre el capital). No tienes que hacer nada extra — ya viene descontado al vencimiento.</p><h2>¿Son mejores que mi cuenta de ahorro?</h2><p>Sí, significativamente. Las cuentas de ahorro bancarias pagan entre 3% y 6% anual. Los CETES pagan 11.2%. En $100,000 invertidos durante un año, la diferencia es de aproximadamente $5,000 pesos a favor de los CETES.</p>`
-  },
-  presupuesto: {
-    title: 'La regla 50/30/20 para tu presupuesto personal',
-    meta: 'Finanzas personales · Nivel: Principiante · 6 min de lectura',
-    body: `<p>La regla 50/30/20 es la forma más simple y efectiva de organizar tus finanzas sin necesitar un contador ni una hoja de cálculo compleja. Fue popularizada por la senadora Elizabeth Warren y funciona para cualquier nivel de ingreso.</p><h2>Cómo funciona</h2><p><strong>50% — Necesidades:</strong> Renta, comida, transporte, servicios básicos, seguros. Todo lo que necesitas para vivir. Si este número pasa del 50%, necesitas revisar tus gastos fijos urgentemente.</p><p><strong>30% — Deseos:</strong> Restaurantes, entretenimiento, ropa no esencial, viajes, suscripciones. Todo lo que quieres pero no necesitas para sobrevivir.</p><p><strong>20% — Ahorro e inversión:</strong> Fondo de emergencia, CETES, Afore voluntario, inversiones. Este 20% es tu futuro.</p><div class="hl">📊 Ejemplo con $18,000 mensuales: $9,000 para necesidades · $5,400 para deseos · $3,600 para ahorro</div><h2>¿Qué pasa si no puedo ahorrar el 20%?</h2><p>Empieza con lo que puedas — aunque sea el 5%. La clave es el hábito, no el porcentaje inicial. Aumenta un 1% cada mes hasta llegar al 20%. En 15 meses estarás en el objetivo.</p>`
-  },
-  etfs: {
-    title: 'ETFs en México: la guía completa',
-    meta: 'Inversión · Nivel: Intermedio · 12 min de lectura',
-    body: `<p>Los ETFs (Exchange Traded Funds) o fondos indexados son la herramienta de inversión más recomendada por los expertos financieros del mundo para inversores no profesionales. Warren Buffett los recomienda. Y hay buenas razones para ello.</p><h2>¿Qué es un ETF?</h2><p>Es un fondo que replica un índice bursátil — como el S&P 500 o el IPC mexicano — y se compra y vende en bolsa como si fuera una acción normal. En lugar de elegir una empresa individual, compras un pedacito de cientos de empresas al mismo tiempo.</p><h2>¿Por qué son mejores que los fondos activos?</h2><p>Más del 80% de los fondos de inversión activos no logran superar a su índice de referencia en un período de 10 años. La razón principal: las comisiones. Un ETF cobra entre 0.03% y 0.5% anual. Un fondo activo cobra entre 1.5% y 3%. En 30 años, esa diferencia puede representar la mitad de tu patrimonio.</p><div class="hl">💡 Los ETFs más populares en México: VOO (S&P 500), QQQ (NASDAQ 100), VWO (mercados emergentes), NAFTRAC (IPC BMV)</div><h2>Cómo comprarlos desde México</h2><p>Puedes acceder a ETFs internacionales a través de <strong>GBM+</strong>, <strong>BBVA Trader</strong> o <strong>Interactive Brokers</strong>. Para ETFs del mercado mexicano, cualquier casa de bolsa los lista directamente en la BMV.</p><h2>Impuestos en México</h2><p>Las ganancias de ETFs en México tributan como ganancias de capital al 10% anual. Debes declararlas en tu declaración anual ante el SAT.</p>`
-  },
-  deudas: {
-    title: 'Cómo salir de deudas: estrategia paso a paso',
-    meta: 'Finanzas personales · Nivel: Principiante · 10 min de lectura',
-    body: `<p>Las deudas de tarjeta de crédito en México tienen un CAT promedio del 40% anual — una de las tasas más altas del mundo. Si debes $20,000 y pagas solo el mínimo mensual, terminarás pagando más de $60,000 en total. Aquí te explicamos cómo salir.</p><h2>Método 1: Avalancha (más eficiente)</h2><p>Lista todas tus deudas de mayor a menor tasa de interés. Paga el mínimo en todas, pero manda todo el dinero extra a la deuda con mayor tasa. Cuando esa se liquide, manda todo a la siguiente. Ahorras más dinero en intereses.</p><h2>Método 2: Bola de nieve (más motivador)</h2><p>Lista todas tus deudas de menor a mayor monto. Liquida primero la más pequeña para sentir el progreso rápido. Ese "win" psicológico te mantiene motivado. Luego sumas ese pago a la siguiente deuda.</p><div class="hl">⚠️ Mientras tienes deudas al 40% CAT, cualquier inversión al 11% (CETES) no tiene sentido matemáticamente. Primero elimina las deudas caras.</div><h2>Negociación con el banco</h2><p>Muchos bancos tienen programas de reestructura de deuda. Si ya llevas varios meses en mora, puedes negociar una quita de hasta el 50% del saldo. Llama directamente al banco y pide hablar con el departamento de cobranza especial.</p>`
-  },
-  fibras: {
-    title: 'FIBRAs: invierte en bienes raíces desde $500 pesos',
-    meta: 'Inversión · Nivel: Intermedio · 10 min de lectura',
-    body: `<p>Los Fideicomisos de Inversión en Bienes Raíces (FIBRAs) te permiten ser dueño de una fracción de centros comerciales, oficinas, hoteles, bodegas industriales o departamentos — sin necesitar millones de pesos ni trámites complicados.</p><h2>¿Cómo funcionan?</h2><p>Las FIBRAs cotizan en la Bolsa Mexicana de Valores como cualquier acción. Compras "certificados" que representan una participación proporcional en el portafolio de inmuebles del fideicomiso. Cada trimestre recibes dividendos — que son tu parte de las rentas que generan esos inmuebles.</p><h2>Las principales FIBRAs en México</h2><p><strong>FIBRA MQ (FIBRAMQ):</strong> Parques industriales y bodegas. Se beneficia del nearshoring.<br><strong>FUNO (FUNO11):</strong> La más grande de México — mezcla de oficinas, retail e industrial.<br><strong>FIBRA Shop (FSHOP):</strong> Centros comerciales en ciudades medianas.<br><strong>FIHO (FIHO12):</strong> Hoteles.</p><div class="hl">📈 Las FIBRAs deben distribuir al menos el 95% de su resultado fiscal como dividendos. Históricamente han pagado entre 6% y 10% anual en distribuciones.</div><h2>Riesgos a considerar</h2><p>Su precio fluctúa con el mercado bursátil y con las tasas de interés. Si las tasas suben, las FIBRAs tienden a bajar de precio (aunque siguen pagando dividendos). Son para horizontes de inversión de 3 años o más.</p>`
-  },
-  afore: {
-    title: 'Afore: guía completa para maximizar tu retiro',
-    meta: 'Retiro · Nivel: Principiante · 9 min de lectura',
-    body: `<p>Tu Afore administra el dinero que recibirás cuando te jubiles. Sin embargo, la mayoría de los mexicanos nunca revisan su saldo, no saben en qué Afore están, y desconocen que pueden hacer aportaciones voluntarias para mejorar su pensión.</p><h2>Cómo revisar tu saldo ahora mismo</h2><p>Entra a <strong>e-sar.com.mx</strong> con tu CURP. Ahí puedes ver tu saldo actualizado, el rendimiento histórico de tu Afore y compararlo con el resto del sistema.</p><h2>¿Cómo elegir la mejor Afore?</h2><p>Compara dos cosas: <strong>rendimiento neto</strong> (qué tanto ha crecido el dinero de sus clientes) e <strong>IMCO</strong> (indicador de comisiones). La CONSAR publica anualmente el ranking de Afores. Puedes cambiarte una vez al año sin costo.</p><div class="hl">💡 Una diferencia del 1% en rendimiento anual durante 30 años puede significar hasta $500,000 pesos más en tu pensión. Vale la pena revisar.</div><h2>Aportaciones voluntarias</h2><p>Puedes depositar dinero adicional en tu Afore a través de <strong>AforeMovil</strong> o en tiendas como 7-Eleven y Walmart. Estas aportaciones tienen beneficio fiscal — son deducibles de impuestos hasta un tope del 10% de tus ingresos anuales.</p>`
-  },
-  crypto: {
-    title: 'Crypto en México: guía completa para 2024',
-    meta: 'Crypto · Nivel: Intermedio · 11 min de lectura',
-    body: `<p>México es uno de los países con mayor adopción de criptomonedas en América Latina. Sin embargo, muchos inversores mexicanos desconocen sus obligaciones fiscales y los riesgos reales de este mercado.</p><h2>¿Cómo comprar crypto en México legalmente?</h2><p>Las plataformas reguladas ante la CNBV incluyen <strong>Bitso</strong> y <strong>Cubo</strong>. Son las más seguras para usuarios mexicanos porque cumplen con la Ley Fintech. Para acceso a más criptomonedas, <strong>Binance</strong> e <strong>Interactive Brokers</strong> también operan en México.</p><h2>Impuestos en México</h2><p>Las ganancias por compraventa de criptomonedas tributan como <strong>ganancias de capital</strong> a la tasa del 35% (para personas físicas en el rango más alto). Debes declararlas en tu declaración anual del SAT. Las plataformas reguladas emiten CFDI que facilitan este proceso.</p><div class="hl">⚠️ El SAT ya tiene acceso a información de exchanges regulados. No declarar puede generar multas y recargos. Guarda registro de todas tus operaciones.</div><h2>¿Cuánto invertir en crypto?</h2><p>Los expertos recomiendan no destinar más del 5-10% de tu portafolio total a criptomonedas. Son activos de muy alto riesgo con volatilidad extrema — Bitcoin ha caído hasta 80% desde sus máximos en ciclos anteriores. Solo invierte lo que puedas perder completamente.</p>`
-  },
-  empresa: {
-    title: 'Finanzas para PyMEs: lo esencial que todo dueño debe saber',
-    meta: 'Empresas · Nivel: Intermedio · 13 min de lectura',
-    body: `<p>El 80% de las PyMEs en México cierran antes de los 5 años. La razón número uno no es falta de clientes — es mala gestión financiera. Estos son los conceptos que pueden salvarte.</p><h2>1. Separa tus finanzas personales de las del negocio</h2><p>Abre una cuenta bancaria exclusiva para tu empresa desde el primer día. Mezclar dinero personal y empresarial es la causa más común de quiebras innecesarias — nunca sabes si el negocio está ganando o perdiendo.</p><h2>2. Entiende tu flujo de caja</h2><p>Una empresa puede ser rentable en papel y quebrar por falta de liquidez. El flujo de caja es el dinero que entra y sale cada semana. Proyéctalo a 3 meses siempre. Si el saldo llega a cero, tienes una crisis aunque tus cuentas por cobrar sean enormes.</p><div class="hl">📊 Regla básica: mantén siempre en cuenta al menos 3 meses de gastos fijos del negocio como reserva de liquidez.</div><h2>3. El punto de equilibrio</h2><p>Es el nivel de ventas que necesitas para no perder dinero. Calcula: Costos fijos mensuales ÷ Margen de contribución (precio - costo variable). Si tu punto de equilibrio es $100,000 y vendes $80,000, estás perdiendo dinero aunque "hagas ventas".</p><h2>4. Acceso a crédito empresarial</h2><p>Las opciones más accesibles para PyMEs en México: <strong>INADEM/SE</strong> (programas gubernamentales), <strong>Kueski Pay Business</strong>, <strong>Konfío</strong> y <strong>Credijusto</strong>. Evita las "cajas de ahorro" informales con tasas abusivas.</p>`
-  },
-  sat: {
-    title: 'SAT para personas físicas: deduce más y paga menos',
-    meta: 'Fiscal · Nivel: Avanzado · 10 min de lectura',
-    body: `<p>La declaración anual no tiene que ser dolorosa. Con las deducciones correctas, muchos contribuyentes terminan con saldo a favor — es decir, el SAT les devuelve dinero. Aquí te explicamos cómo.</p><h2>Deducciones personales que puedes aplicar</h2><p><strong>Honorarios médicos y dentales:</strong> Con CFDI, incluyendo médicos, dentistas, psicólogos, optometristas y nutriólogos.<br><strong>Primas de seguro de gastos médicos mayores:</strong> El total de lo que pagas por tu seguro.<br><strong>Colegiaturas:</strong> Desde jardín de niños hasta bachillerato, con topes por nivel.<br><strong>Intereses hipotecarios:</strong> Si tienes crédito hipotecario con institución financiera formal.<br><strong>Donativos:</strong> A instituciones autorizadas por el SAT.<br><strong>Aportaciones voluntarias al Afore:</strong> Hasta el 10% de tus ingresos anuales.</p><div class="hl">💡 El límite de deducciones personales es el 15% de tu ingreso total anual o 5 UMAs anuales (~$175,000 pesos en 2024), el que sea menor.</div><h2>¿Cómo obtener tu devolución?</h2><p>Presenta tu declaración antes del 30 de abril. Si tienes saldo a favor, el SAT tiene 40 días para devolverte el dinero directamente a tu cuenta bancaria (CLABE). Asegúrate de tener todos tus CFDI de gastos deducibles — descárgalos de tu portal del SAT.</p>`
-  }
-};
-
-function openEduModal(id) {
-  const e = eduContent[id]; if (!e) return;
-  const h = document.getElementById('edu-hero');
-  h.innerHTML = `<h1>${e.title}</h1>`;
-  document.getElementById('edu-meta').textContent = e.meta;
-  document.getElementById('edu-body').innerHTML = e.body;
-  document.getElementById('m-edu').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeEdu() {
-  document.getElementById('m-edu').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-
-// Fallback data mientras cargan las APIs
-const mktFallback = [
-  {sym:'BTC',name:'Bitcoin',price:0,chg:0,pct:0,cat:'Crypto',up:true},
-  {sym:'ETH',name:'Ethereum',price:0,chg:0,pct:0,cat:'Crypto',up:true},
-  {sym:'SOL',name:'Solana',price:0,chg:0,pct:0,cat:'Crypto',up:true},
-  {sym:'BNB',name:'BNB',price:0,chg:0,pct:0,cat:'Crypto',up:true},
-  {sym:'USDMXN',name:'USD/MXN',price:0,chg:0,pct:0,cat:'Divisa',up:false},
-  {sym:'EURMXN',name:'EUR/MXN',price:0,chg:0,pct:0,cat:'Divisa',up:true},
-  {sym:'GBPMXN',name:'GBP/MXN',price:0,chg:0,pct:0,cat:'Divisa',up:true},
-  {sym:'JPYMXN',name:'JPY/MXN',price:0,chg:0,pct:0,cat:'Divisa',up:true},
+const guides = [
+  {icon:'💰',bg:'#E1F5EE',lv:'lv-beg',lvl:'Principiante',title:'Cómo invertir en CETES desde $100',desc:'Todo lo que necesitas para empezar en los instrumentos más seguros de México.',id:'cetes'},
+  {icon:'📋',bg:'#E6F1FB',lv:'lv-beg',lvl:'Principiante',title:'Presupuesto personal con la regla 50/30/20',desc:'La forma más simple y efectiva de organizar tus finanzas personales.',id:'presupuesto'},
+  {icon:'📊',bg:'#FAEEDA',lv:'lv-mid',lvl:'Intermedio',title:'ETFs en México: la guía completa',desc:'Qué son, cómo comprarlos desde México y cómo pagar impuestos.',id:'etfs'},
+  {icon:'💳',bg:'#FCEBEB',lv:'lv-beg',lvl:'Principiante',title:'Cómo salir de deudas paso a paso',desc:'Estrategias probadas para liquidar tarjetas y préstamos sin desesperarte.',id:'deudas'},
+  {icon:'🏢',bg:'#EEEDFE',lv:'lv-mid',lvl:'Intermedio',title:'FIBRAs: bienes raíces desde $500 pesos',desc:'Cómo ser dueño de centros comerciales y bodegas sin comprar un inmueble.',id:'fibras'},
+  {icon:'🏖️',bg:'#E1F5EE',lv:'lv-beg',lvl:'Principiante',title:'Afore: todo lo que nadie te explicó',desc:'Cómo revisar tu saldo, cambiar de afore y maximizar tu pensión.',id:'afore'},
+  {icon:'₿',bg:'#FAEEDA',lv:'lv-mid',lvl:'Intermedio',title:'Crypto en México: comprar y pagar impuestos',desc:'Bitcoin, Ethereum y tus obligaciones con el SAT explicadas.',id:'crypto'},
+  {icon:'🏭',bg:'#E6F1FB',lv:'lv-mid',lvl:'Empresas',title:'Finanzas para PyMEs: lo esencial',desc:'Flujo de caja, crédito y crecimiento para dueños de negocio.',id:'empresa'},
+  {icon:'🧾',bg:'#FCEBEB',lv:'lv-adv',lvl:'Avanzado',title:'SAT: deduce más y paga menos impuestos',desc:'Deducciones personales, CFDI y declaración anual para personas físicas.',id:'sat'},
 ];
 
-let mktData = [...mktFallback];
+const guideContent = {
+  cetes:{title:'Cómo invertir en CETES desde $100',meta:'Finanzas personales · Principiante · 8 min',body:`<p>Los Certificados de la Tesorería de la Federación (CETES) son el instrumento de inversión más seguro que existe en México, respaldado directamente por el gobierno federal.</p><h2>Cómo comprarlos</h2><p>1. Entra a cetesdirecto.com — la plataforma oficial del gobierno, sin comisiones.<br>2. Crea tu cuenta con CURP, RFC e información bancaria.<br>3. Transfiere dinero y elige el plazo.<br>4. Confirma tu inversión.</p><div class="hl">Con la tasa actual del 11.2% anual, $10,000 en CETES a 364 días generan aproximadamente $1,105 de ganancia neta después de ISR.</div><h2>Impuestos</h2><p>Los CETES retienen automáticamente el ISR correspondiente (0.15% sobre el capital). No tienes que hacer nada extra.</p>`},
+  presupuesto:{title:'La regla 50/30/20 para tu presupuesto',meta:'Finanzas personales · Principiante · 6 min',body:`<p>La regla 50/30/20 es la forma más simple de organizar tus finanzas sin necesitar un contador ni una hoja de cálculo compleja.</p><h2>Cómo funciona</h2><p><strong>50% — Necesidades:</strong> Renta, comida, transporte, servicios básicos.</p><p><strong>30% — Deseos:</strong> Restaurantes, entretenimiento, viajes.</p><p><strong>20% — Ahorro e inversión:</strong> Fondo de emergencia, CETES, Afore.</p><div class="hl">Ejemplo con $18,000 mensuales: $9,000 necesidades · $5,400 deseos · $3,600 ahorro</div>`},
+  etfs:{title:'ETFs en México: la guía completa',meta:'Inversión · Intermedio · 12 min',body:`<p>Los ETFs son la herramienta de inversión más recomendada por expertos para inversores no profesionales. Warren Buffett los recomienda.</p><h2>¿Qué es un ETF?</h2><p>Es un fondo que replica un índice bursátil y se compra como una acción normal. En lugar de elegir una empresa, compras un pedacito de cientos de empresas.</p><div class="hl">ETFs populares en México: VOO (S&P 500), QQQ (NASDAQ 100), NAFTRAC (IPC BMV)</div><h2>Cómo comprarlos</h2><p>Puedes acceder a través de GBM+, BBVA Trader o Interactive Brokers.</p>`},
+  deudas:{title:'Cómo salir de deudas: estrategia paso a paso',meta:'Finanzas personales · Principiante · 10 min',body:`<p>Las deudas de tarjeta de crédito en México tienen un CAT promedio del 40% anual. Si debes $20,000 y pagas solo el mínimo, terminarás pagando más de $60,000.</p><h2>Método Avalancha</h2><p>Lista tus deudas de mayor a menor tasa. Paga el mínimo en todas, pero manda todo el dinero extra a la deuda con mayor tasa. Ahorras más en intereses.</p><h2>Método Bola de nieve</h2><p>Lista de menor a mayor monto. Liquida primero la más pequeña para motivarte. Ese "win" psicológico te mantiene en el camino.</p><div class="hl">Mientras tienes deudas al 40% CAT, invertir en CETES al 11% no tiene sentido matemáticamente. Primero elimina las deudas caras.</div>`},
+  fibras:{title:'FIBRAs: invierte en bienes raíces desde $500',meta:'Inversión · Intermedio · 10 min',body:`<p>Los Fideicomisos de Inversión en Bienes Raíces te permiten ser dueño de una fracción de centros comerciales, bodegas y hoteles sin millones de pesos.</p><h2>Principales FIBRAs en México</h2><p>FIBRA MQ (FIBRAMQ): parques industriales · FUNO (FUNO11): la más grande de México · FIBRA Shop: centros comerciales</p><div class="hl">Las FIBRAs deben distribuir al menos el 95% de su resultado fiscal como dividendos. Históricamente han pagado entre 6% y 10% anual.</div>`},
+  afore:{title:'Afore: guía completa para maximizar tu retiro',meta:'Retiro · Principiante · 9 min',body:`<p>Tu Afore administra el dinero que recibirás cuando te jubiles. La mayoría de los mexicanos nunca revisan su saldo ni hacen aportaciones voluntarias.</p><h2>Cómo revisar tu saldo</h2><p>Entra a e-sar.com.mx con tu CURP. Puedes ver tu saldo actualizado y el rendimiento histórico de tu Afore.</p><div class="hl">Una diferencia del 1% en rendimiento anual durante 30 años puede significar hasta $500,000 pesos más en tu pensión.</div><h2>Aportaciones voluntarias</h2><p>Puedes depositar dinero adicional a través de AforeMovil o en tiendas como 7-Eleven. Son deducibles de impuestos.</p>`},
+  crypto:{title:'Crypto en México: guía completa 2024',meta:'Crypto · Intermedio · 11 min',body:`<p>México es uno de los países con mayor adopción de criptomonedas en América Latina. Sin embargo, muchos desconocen sus obligaciones fiscales.</p><h2>Dónde comprar crypto en México</h2><p>Plataformas reguladas por la CNBV: Bitso y Cubo. También Binance e Interactive Brokers operan en México.</p><div class="hl">Las ganancias por crypto tributan como ganancias de capital al 35%. El SAT ya tiene acceso a información de exchanges regulados.</div><h2>¿Cuánto invertir?</h2><p>No más del 5-10% de tu portafolio. Bitcoin ha caído hasta 80% desde sus máximos en ciclos anteriores.</p>`},
+  empresa:{title:'Finanzas para PyMEs: lo esencial',meta:'Empresas · Intermedio · 13 min',body:`<p>El 80% de las PyMEs en México cierran antes de los 5 años. La razón número uno no es falta de clientes — es mala gestión financiera.</p><h2>Separa tus finanzas</h2><p>Abre una cuenta bancaria exclusiva para tu empresa desde el primer día. Mezclar dinero personal y empresarial es la causa más común de quiebras innecesarias.</p><h2>Entiende tu flujo de caja</h2><p>Una empresa puede ser rentable en papel y quebrar por falta de liquidez. Proyecta tu flujo a 3 meses siempre.</p><div class="hl">Regla básica: mantén siempre en cuenta al menos 3 meses de gastos fijos como reserva de liquidez.</div>`},
+  sat:{title:'SAT para personas físicas: deduce más',meta:'Fiscal · Avanzado · 10 min',body:`<p>Con las deducciones correctas, muchos contribuyentes terminan con saldo a favor — el SAT les devuelve dinero.</p><h2>Deducciones personales</h2><p>Honorarios médicos y dentales · Primas de seguro de gastos médicos · Colegiaturas (jardín a bachillerato) · Intereses hipotecarios · Donativos · Aportaciones voluntarias al Afore</p><div class="hl">El límite de deducciones personales es el 15% de tu ingreso total o 5 UMAs anuales (~$175,000 pesos), el que sea menor.</div>`},
+};
 
-function renderMarketCards() {
-  const cards = document.getElementById('mkt-cards');
-  const tbody = document.getElementById('mkt-tbody');
-  document.getElementById('mkt-time').textContent = new Date().toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
+document.getElementById('guides-grid').innerHTML = guides.map(g => `
+  <div class="guide-card" onclick="openGuide('${g.id}')">
+    <div class="guide-icon" style="background:${g.bg}">${g.icon}</div>
+    <span class="guide-lv ${g.lv}">${g.lvl}</span>
+    <div class="guide-title">${g.title}</div>
+    <div class="guide-desc">${g.desc}</div>
+    <div class="guide-arrow">Leer guía →</div>
+  </div>`).join('');
 
-  if (mktData.every(m => m.price === 0)) {
-    cards.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--t3);font-size:13px">⏳ Cargando precios en tiempo real...</div>';
-    return;
-  }
-
-  cards.innerHTML = mktData.filter(m => m.price > 0).map(m => `
-    <div style="background:var(--sur);border:1px solid var(--b);border-radius:12px;padding:16px;transition:border-color .2s;cursor:pointer" onclick="loadTV('${getTVSymbol(m.sym)}','${m.name}')" onmouseover="this.style.borderColor='var(--b2)'" onmouseout="this.style.borderColor='var(--b)'">
-      <div style="font-size:10px;font-weight:600;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">${m.sym}</div>
-      <div style="font-size:17px;font-weight:600;color:var(--t);margin-bottom:4px">${formatPrice(m.price, m.sym)}</div>
-      <div style="font-size:12px;font-weight:500;color:${m.up?'#0F6E56':'#A32D2D'}">${m.up?'▲':'▼'} ${Math.abs(m.pct).toFixed(2)}%</div>
-      <div style="font-size:11px;color:var(--t3);margin-top:4px">${m.name}</div>
-    </div>`).join('');
-
-  tbody.innerHTML = mktData.filter(m => m.price > 0).map((m,i) => `
-    <tr style="border-top:1px solid var(--b);${i%2===0?'':'background:var(--bg)'}">
-      <td style="padding:12px 20px;font-weight:500;color:var(--t)">${m.name}</td>
-      <td style="padding:12px 20px;text-align:right;font-weight:600;color:var(--t)">${formatPrice(m.price, m.sym)}</td>
-      <td style="padding:12px 20px;text-align:right;color:${m.up?'#0F6E56':'#A32D2D'}">${m.up?'+':''}${m.chg > 0 ? m.chg.toFixed(2) : m.chg.toFixed(4)}</td>
-      <td style="padding:12px 20px;text-align:right"><span style="background:${m.up?'#E1F5EE':'#FCEBEB'};color:${m.up?'#0F6E56':'#A32D2D'};padding:3px 8px;border-radius:20px;font-size:12px;font-weight:600">${m.up?'+':''}${m.pct.toFixed(2)}%</span></td>
-      <td style="padding:12px 20px;font-size:12px;color:var(--t3)">${m.cat}</td>
-    </tr>`).join('');
+function openGuide(id) {
+  const g = guideContent[id];
+  if (!g) return;
+  document.getElementById('modal-edu-hero').innerHTML = `<h1>${g.title}</h1>`;
+  document.getElementById('modal-edu-meta').textContent = g.meta;
+  document.getElementById('modal-edu-body').innerHTML = g.body;
+  openModal('modal-edu');
 }
 
-function formatPrice(p, sym) {
-  if (p > 10000) return '$' + p.toLocaleString('es-MX', {maximumFractionDigits:0});
-  if (p > 100) return '$' + p.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
-  if (p > 1) return p.toFixed(4);
-  return p.toFixed(6);
+// ── MINI CALCULADORA CETES ──
+function calcMiniCetes() {
+  const cap = parseFloat(document.getElementById('mini-capital').value) || 0;
+  const dias = parseInt(document.getElementById('mini-plazo').value) || 364;
+  const tasa = 0.112;
+  if (cap <= 0) return;
+  const bruto = cap * tasa * (dias / 365);
+  const neto = bruto * (1 - 0.0015);
+  const total = cap + neto;
+  document.getElementById('mini-ganancia').textContent = '$' + neto.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('mini-detalle').textContent = `Total al vencimiento: $${total.toLocaleString('es-MX', {minimumFractionDigits:2})} · Tasa: 11.2% anual`;
+  document.getElementById('mini-result').style.display = 'block';
 }
+setTimeout(calcMiniCetes, 500);
 
-function getTVSymbol(sym) {
-  const map = {
-    'BTC':'BITSTAMP:BTCUSD','ETH':'BITSTAMP:ETHUSD',
-    'SOL':'BINANCE:SOLUSDT','BNB':'BINANCE:BNBUSDT',
-    'USDMXN':'FX:USDMXN','EURMXN':'FX:EURMXN',
-    'GBPMXN':'FX:GBPMXN','JPYMXN':'FX:JPYMXN'
-  };
-  return map[sym] || 'SP:SPX';
+// ── FLOATING WIDGET — noticias recientes ──
+function updateFloatingWidget(recent) {
+  const fw = document.getElementById('fpw-news');
+  if (!fw || !recent) return;
+  fw.innerHTML = recent.slice(0,3).map((r,i) => {
+    const t = r.c[1]?.v || 'Sin título';
+    const f = r.c[0]?.v || '';
+    const id = `fw_${i}`;
+    dynArts[id] = {
+      title: t,
+      meta: timeAgo(f),
+      body: r.c[2]?.v ? `<p>${r.c[2].v.replace(/\n\n/g,'</p><p>')}</p>` : ''
+    };
+    return `<div class="fpw-row" onclick="openDyn('${id}')" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 14px">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.7);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${t}</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.3)">${timeAgo(f)}</div>
+    </div>`;
+  }).join('');
 }
-
-async function loadMarkets() {
-  renderMarketCards();
-
-  try {
-    // 1. CRYPTO — CoinGecko API (gratuita, sin key)
-    const cgRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin&vs_currencies=usd&include_24hr_change=true');
-    if (cgRes.ok) {
-      const cg = await cgRes.json();
-      const cgMap = {
-        'BTC': cg.bitcoin,
-        'ETH': cg.ethereum,
-        'SOL': cg.solana,
-        'BNB': cg.binancecoin
-      };
-      mktData = mktData.map(m => {
-        if (cgMap[m.sym]) {
-          const d = cgMap[m.sym];
-          const pct = d.usd_24h_change || 0;
-          const price = d.usd;
-          const chg = price * pct / 100;
-          return {...m, price, chg: parseFloat(chg.toFixed(2)), pct: parseFloat(pct.toFixed(2)), up: pct >= 0};
-        }
-        return m;
-      });
-      renderMarketCards();
-    }
-  } catch(e) { console.log('CoinGecko:', e.message); }
-
-  try {
-    // 2. DIVISAS — ExchangeRate API (gratuita)
-    const fxRes = await fetch('https://api.exchangerate-api.com/v4/latest/MXN');
-    if (fxRes.ok) {
-      const fx = await fxRes.json();
-      const rates = fx.rates;
-      const usdmxn = 1 / (rates.USD || 0.058);
-      const eurmxn = 1 / (rates.EUR || 0.052);
-      const gbpmxn = 1 / (rates.GBP || 0.044);
-      const jpymxn = 1 / (rates.JPY || 8.7);
-
-      mktData = mktData.map(m => {
-        if (m.sym === 'USDMXN') return {...m, price: parseFloat(usdmxn.toFixed(4)), pct: 0, chg: 0, up: true};
-        if (m.sym === 'EURMXN') return {...m, price: parseFloat(eurmxn.toFixed(4)), pct: 0, chg: 0, up: true};
-        if (m.sym === 'GBPMXN') return {...m, price: parseFloat(gbpmxn.toFixed(4)), pct: 0, chg: 0, up: true};
-        if (m.sym === 'JPYMXN') return {...m, price: parseFloat(jpymxn.toFixed(4)), pct: 0, chg: 0, up: true};
-        return m;
-      });
-      renderMarketCards();
-    }
-  } catch(e) { console.log('ExchangeRate:', e.message); }
+function calcCetes() {
+  const cap = parseFloat(document.getElementById('c-capital').value)||0;
+  const tasa = parseFloat(document.getElementById('c-tasa').value)/100||0;
+  const dias = parseInt(document.getElementById('c-plazo').value)||364;
+  const bruto = cap * tasa * (dias/365);
+  const neto = bruto * (1 - 0.0015);
+  document.getElementById('r-cetes-num').textContent = '$' + neto.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('r-cetes-detail').textContent = `Capital: $${cap.toLocaleString('es-MX')} · Bruto: $${bruto.toFixed(2)} · Total: $${(cap+neto).toLocaleString('es-MX',{minimumFractionDigits:2})}`;
+  document.getElementById('r-cetes').classList.add('show');
 }
-
-
-
-let tvLoaded = false;
-let currentSymbol = 'SP:SPX';
-let currentName = 'S&P 500';
-
-function initTradingView(symbol) {
-  const container = document.getElementById('tradingview-widget');
-  container.innerHTML = '';
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://s3.tradingview.com/tv.js';
-  script.onload = function() {
-    new TradingView.widget({
-      container_id: 'tradingview-widget',
-      symbol: symbol,
-      interval: 'D',
-      timezone: 'America/Mexico_City',
-      theme: isDark ? 'dark' : 'light',
-      style: '1',
-      locale: 'es',
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      save_image: false,
-      height: 480,
-      width: '100%',
-      show_popup_button: true,
-      popup_width: '1000',
-      popup_height: '650'
-    });
-  };
-  if (window.TradingView) { script.onload(); }
-  else { document.head.appendChild(script); }
+function calcIC() {
+  const cap = parseFloat(document.getElementById('ic-capital').value)||0;
+  const aporte = parseFloat(document.getElementById('ic-aporte').value)||0;
+  const tasa = parseFloat(document.getElementById('ic-tasa').value)/100||0;
+  const años = parseInt(document.getElementById('ic-años').value)||10;
+  let total = cap;
+  for (let i = 0; i < años*12; i++) total = total*(1+tasa/12)+aporte;
+  const aportado = cap + aporte*años*12;
+  document.getElementById('r-ic-num').textContent = '$' + Math.round(total).toLocaleString('es-MX');
+  document.getElementById('r-ic-detail').textContent = `Aportado: $${Math.round(aportado).toLocaleString('es-MX')} · Intereses: $${Math.round(total-aportado).toLocaleString('es-MX')} · Crecimiento: ${Math.round((total/aportado-1)*100)}%`;
+  document.getElementById('r-ic').classList.add('show');
 }
-
-function initFundamentals(symbol, name) {
-  const container = document.getElementById('tv-fundamentals');
-  container.innerHTML = '';
-  document.getElementById('fund-title').textContent = `Datos fundamentales — ${name}`;
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const div = document.createElement('div');
-  div.className = 'tradingview-widget-container';
-  const inner = document.createElement('div');
-  inner.className = 'tradingview-widget-container__widget';
-  div.appendChild(inner);
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
-  script.async = true;
-  script.text = JSON.stringify({
-    symbol: symbol,
-    width: '100%',
-    locale: 'es',
-    colorTheme: isDark ? 'dark' : 'light',
-    isTransparent: true
-  });
-  div.appendChild(script);
-  container.appendChild(div);
+function calcFE() {
+  const gasto = parseFloat(document.getElementById('fe-gasto').value)||0;
+  const meses = parseInt(document.getElementById('fe-meses').value)||6;
+  const ahorro = parseFloat(document.getElementById('fe-ahorro').value)||0;
+  const meta = gasto * meses;
+  const tiempo = ahorro > 0 ? Math.ceil(meta/ahorro) : 0;
+  document.getElementById('r-fe-num').textContent = '$' + meta.toLocaleString('es-MX');
+  document.getElementById('r-fe-detail').textContent = `Para ${meses} meses necesitas $${meta.toLocaleString('es-MX')}. ${ahorro>0?`Ahorrando $${ahorro.toLocaleString('es-MX')}/mes lo logras en ${tiempo} meses.`:'Ingresa tu ahorro mensual.'}`;
+  document.getElementById('r-fe').classList.add('show');
 }
-
-function initTickerTape() {
-  const container = document.getElementById('tv-ticker');
-  if (!container) return;
-  container.innerHTML = '';
-  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const div = document.createElement('div');
-  div.className = 'tradingview-widget-container';
-  div.innerHTML = `<div class="tradingview-widget-container__widget"></div>`;
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
-  script.async = true;
-  script.text = JSON.stringify({
-    symbols: [
-      {"proName":"SP:SPX","title":"S&P 500"},
-      {"proName":"NASDAQ:IXIC","title":"NASDAQ"},
-      {"proName":"FX:USDMXN","title":"USD/MXN"},
-      {"proName":"FX:EURUSD","title":"EUR/USD"},
-      {"proName":"BITSTAMP:BTCUSD","title":"Bitcoin"},
-      {"proName":"BITSTAMP:ETHUSD","title":"Ethereum"},
-      {"proName":"COMEX:GC1!","title":"Oro"},
-      {"proName":"NYMEX:CL1!","title":"Petróleo WTI"},
-      {"proName":"NYSE:AMX","title":"América Móvil"},
-      {"proName":"NYSE:CX","title":"Cemex"},
-      {"proName":"NASDAQ:AAPL","title":"Apple"},
-      {"proName":"NASDAQ:NVDA","title":"Nvidia"},
-      {"proName":"NYSE:TSLA","title":"Tesla"},
-      {"proName":"NASDAQ:AMZN","title":"Amazon"}
-    ],
-    showSymbolLogo: true,
-    colorTheme: isDark ? 'dark' : 'light',
-    isTransparent: true,
-    displayMode: 'adaptive',
-    locale: 'es'
-  });
-  div.appendChild(script);
-  container.appendChild(div);
-}
-
-function loadTV(symbol, name) {
-  currentSymbol = symbol;
-  currentName = name;
-  initTradingView(symbol);
-  initFundamentals(symbol, name);
-}
-
-function searchTV() {
-  const q = document.getElementById('tv-search-input').value.trim().toUpperCase();
-  if (!q) return;
-  loadTV(q, q);
-}
-
-function showTVSuggestions(val) {
-  // Just update placeholder, actual search happens on Enter or button
-}
-
-function setTVSymbol(symbol) {
-  loadTV(symbol, symbol);
-}
-
-// ── NAVIGATION ──
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.querySelectorAll('.nl').forEach(l => l.classList.remove('active'));
-  const nl = document.getElementById('nav-' + name); if (nl) nl.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (name === 'directorio') renderBiz(bizs);
-  if (name === 'mercados') {
-    loadMarkets();
-    loadTV(currentSymbol, currentName);
-    initTickerTape();
-  }
-}
-
-function selPlan(plan) {
-  const map = {'Básico':'Básico — $299/mes','Pro':'Pro — $699/mes','Premium':'Premium — $1,499/mes'};
-  document.getElementById('f-plan').value = map[plan];
-  showPage('anunciate');
-  setTimeout(() => document.getElementById('f-neg').focus(), 400);
-  showToast('Plan seleccionado: ' + plan + ' ✓');
-}
-
-function submitForm() {
-  const neg = document.getElementById('f-neg').value.trim();
-  const email = document.getElementById('f-email').value.trim();
-  if (!neg || !email) { showToast('Por favor completa nombre y email ⚠️'); return; }
-  showToast('✅ Solicitud enviada. Te contactamos en menos de 24 hrs.');
-  ['f-neg','f-nom','f-email','f-wa','f-desc'].forEach(id => document.getElementById(id).value = '');
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-function toggleFaq(btn) {
-  const a = btn.nextElementSibling; const open = a.classList.contains('open');
-  document.querySelectorAll('.faq-a').forEach(x => x.classList.remove('open'));
-  document.querySelectorAll('.faq-q span').forEach(s => s.textContent = '+');
-  if (!open) { a.classList.add('open'); btn.querySelector('span').textContent = '−'; }
+function calcRetiro() {
+  const edad = parseInt(document.getElementById('ret-edad').value)||30;
+  const meta = parseInt(document.getElementById('ret-meta').value)||65;
+  const gasto = parseFloat(document.getElementById('ret-gasto').value)||0;
+  const afore = parseFloat(document.getElementById('ret-afore').value)||0;
+  const años = meta - edad;
+  const añosRetiro = 85 - meta;
+  const totalNec = gasto * 12 * añosRetiro;
+  const faltante = Math.max(0, totalNec - afore);
+  const mensual = años > 0 ? faltante/(años*12) : 0;
+  document.getElementById('r-ret-num').textContent = '$' + Math.round(totalNec).toLocaleString('es-MX');
+  document.getElementById('r-ret-detail').textContent = `Para vivir ${añosRetiro} años en retiro necesitas $${Math.round(totalNec).toLocaleString('es-MX')}. Tienes $${afore.toLocaleString('es-MX')} en Afore. Necesitas ahorrar ~$${Math.round(mensual).toLocaleString('es-MX')}/mes durante ${años} años.`;
+  document.getElementById('r-ret').classList.add('show');
 }
 </script>
 </body>
