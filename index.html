@@ -992,7 +992,15 @@ async function loadNews() {
       const id = `art_${idx}`;
       dynArts[id] = { title, meta: `${tag} · ${readTime(body)} de lectura · ${timeAgo(date)}`, body: body ? `<p>${body.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p>` : '' };
 
-      if (i === 2) html += `<div class="ad-card" onclick="openBiz('galpon')"><div class="ad-label">Patrocinado</div><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div class="ad-icon">📦</div><div class="ad-name" style="font-size:15px;font-weight:800;color:var(--gd)">Galpon Empaques S.A. de C.V.</div></div><div class="ad-desc">Soluciones de empaque y embalaje para empresas. Romita, Guanajuato.</div><div class="ad-tag">Empaques · Guanajuato</div><div class="ad-cta">Ver perfil →</div></div>`;
+      if (i === 2) html += `<div onclick="openBiz('galpon')" style="background:#E1F5EE;border:1.5px solid #1D9E75;border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size:10px;font-weight:700;color:#0F6E56;letter-spacing:.1em;text-transform:uppercase">📢 Patrocinado</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:32px">📦</div>
+          <div><div style="font-size:15px;font-weight:800;color:#04342C">Galpon Empaques</div><div style="font-size:11px;font-weight:600;color:#085041">S.A. de C.V. · Romita, Gto.</div></div>
+        </div>
+        <div style="font-size:12px;color:#085041;line-height:1.55">Soluciones de empaque y embalaje para empresas de todos los tamaños.</div>
+        <div style="display:inline-block;padding:8px 16px;background:#1D9E75;color:#fff;border-radius:8px;font-size:12px;font-weight:600;width:fit-content">Ver perfil →</div>
+      </div>`;
 
       html += `<div class="news-card" onclick="openDyn('${id}')"><div class="news-card-accent" style="background:${accent}"></div><div class="news-card-body"><span class="news-card-tag ${tagCls}">${tag}</span><h3 class="news-card-title">${title}</h3><p class="news-card-excerpt">${intro}</p><div class="news-card-footer"><span>${timeAgo(date)} · ${readTime(body)}</span><span class="news-card-read">Leer →</span></div></div></div>`;
       idx++;
@@ -1028,7 +1036,7 @@ function renderBiz(list) {
         <div class="biz-tags">${b.tags.map(t=>`<span class="biz-tag">${t}</span>`).join('')}</div>
         <div class="biz-footer">
           <a href="tel:${b.ph.replace(/\s/g,'')}" class="biz-btn-call" onclick="event.stopPropagation()">📞 ${b.ph}</a>
-          <a href="mailto:${b.email}" class="biz-btn-mail" onclick="event.stopPropagation()" style="font-size:11px">✉️ ${b.email}</a>
+          <a href="mailto:${b.email}" class="biz-btn-mail" onclick="event.stopPropagation()">✉️ Enviar correo</a>
         </div>
       </div>
     </div>`).join('');
