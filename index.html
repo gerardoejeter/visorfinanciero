@@ -310,17 +310,21 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
 </head>
 <body>
 
-<!-- FLOATING WIDGET — Últimas noticias -->
+<!-- FLOATING WIDGET — Mercados -->
 <div class="fpw" id="fpw">
   <div class="fpw-header" onclick="document.getElementById('fpw').classList.toggle('collapsed')">
-    <div class="fpw-title"><div class="fpw-dot"></div>Últimas noticias</div>
+    <div class="fpw-title"><div class="fpw-dot"></div>Mercados</div>
     <div class="fpw-toggle">▲</div>
   </div>
-  <div class="fpw-body" id="fpw-news">
-    <div style="padding:10px 14px;font-size:11px;color:rgba(255,255,255,.4)">Cargando...</div>
+  <div class="fpw-body">
+    <div class="fpw-row"><span class="fpw-sym">IPC</span><span class="fpw-val" id="fw-ipc">52,340</span><span class="fpw-chg up">+1.36%</span></div>
+    <div class="fpw-row"><span class="fpw-sym">USD/MXN</span><span class="fpw-val" id="fw-usd">17.24</span><span class="fpw-chg dn">-0.29%</span></div>
+    <div class="fpw-row"><span class="fpw-sym">BTC</span><span class="fpw-val" id="fw-btc">68,420</span><span class="fpw-chg up">+2.14%</span></div>
+    <div class="fpw-row"><span class="fpw-sym">ORO</span><span class="fpw-val" id="fw-oro">2,318</span><span class="fpw-chg up">+0.63%</span></div>
+    <div class="fpw-row"><span class="fpw-sym">S&P 500</span><span class="fpw-val">5,287</span><span class="fpw-chg up">+0.41%</span></div>
   </div>
   <div class="fpw-footer">
-    <div class="fpw-btn" onclick="document.getElementById('news-grid')?.scrollIntoView({behavior:'smooth'});document.getElementById('fpw').classList.add('collapsed')">Ver todas →</div>
+    <div class="fpw-btn" onclick="showPage('educacion')">Ver educación financiera →</div>
   </div>
 </div>
 
@@ -816,19 +820,17 @@ buildSpark('spark-oro', [5,6,7,6,8,7,8,9,9,9], true);
 
 // ── PRICE FLICKER ──
 const priceEls = [
-  {id:'p-ipc',fw:'fw-ipc',base:52340,big:true},
-  {id:'p-usd',fw:'fw-usd',base:17.24,big:false},
-  {id:'p-btc',fw:'fw-btc',base:68420,big:true},
-  {id:'p-oro',fw:'fw-oro',base:2318,big:true},
+  {id:'fw-ipc',base:52340,big:true},
+  {id:'fw-usd',base:17.24,big:false},
+  {id:'fw-btc',base:68420,big:true},
+  {id:'fw-oro',base:2318,big:true},
 ];
 function flickerPrices() {
   priceEls.forEach(m => {
     const v = m.base * (1 + (Math.random()-.5) * .0008);
     const fmt = m.big ? v.toLocaleString('es-MX',{maximumFractionDigits:0}) : v.toFixed(2);
     const el = document.getElementById(m.id);
-    const fw = document.getElementById(m.fw);
     if (el) el.textContent = fmt;
-    if (fw) fw.textContent = fmt;
   });
 }
 setInterval(flickerPrices, 3000);
