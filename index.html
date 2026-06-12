@@ -448,37 +448,19 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
         </div>
       </div>
 
-      <!-- MINI CALCULADORA CETES -->
+      <!-- TIPS CARRUSEL -->
       <div class="split-news" style="padding:16px 24px;border-top:1px solid var(--b)">
         <div class="split-panel-label" style="margin-bottom:12px">
-          <span>💰 Calculadora CETES rápida</span>
-        </div>
-        <div style="font-size:12px;color:var(--t3);margin-bottom:12px">¿Cuánto ganarías invirtiendo hoy?</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-          <div>
-            <div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:4px">Capital a invertir (MXN)</div>
-            <input id="mini-capital" type="number" value="10000" placeholder="Ej: 10,000"
-              style="width:100%;padding:9px 12px;border:1px solid var(--b2);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none"
-              oninput="calcMiniCetes()">
-          </div>
-          <div>
-            <div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:4px">Plazo</div>
-            <select id="mini-plazo" onchange="calcMiniCetes()"
-              style="width:100%;padding:9px 12px;border:1px solid var(--b2);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);outline:none">
-              <option value="28">28 días</option>
-              <option value="91">91 días (3 meses)</option>
-              <option value="182">182 días (6 meses)</option>
-              <option value="364" selected>364 días (1 año)</option>
-            </select>
+          <span>⚡ Tips financieros</span>
+          <div style="display:flex;gap:6px">
+            <button onclick="prevTip()" style="width:24px;height:24px;border:1px solid var(--b2);border-radius:6px;background:var(--sur);color:var(--t2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.borderColor='var(--g)'" onmouseout="this.style.borderColor='var(--b2)'">‹</button>
+            <button onclick="nextTip()" style="width:24px;height:24px;border:1px solid var(--b2);border-radius:6px;background:var(--sur);color:var(--t2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.borderColor='var(--g)'" onmouseout="this.style.borderColor='var(--b2)'">›</button>
           </div>
         </div>
-        <div id="mini-result" style="background:var(--gl);border-radius:10px;padding:12px 14px;display:none">
-          <div style="font-size:11px;color:var(--gm);margin-bottom:2px">Ganancia neta estimada</div>
-          <div id="mini-ganancia" style="font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--gm)"></div>
-          <div id="mini-detalle" style="font-size:11px;color:var(--gm);opacity:.7;margin-top:4px"></div>
-        </div>
-        <button onclick="showPage('educacion')" style="width:100%;margin-top:10px;padding:9px;background:transparent;border:1px solid var(--b2);border-radius:8px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit;transition:.2s" onmouseover="this.style.borderColor='var(--g)';this.style.color='var(--g)'" onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t2)'">
-          Ver calculadoras completas →
+        <div id="tips-carousel" style="position:relative;overflow:hidden;min-height:120px"></div>
+        <div id="tips-dots" style="display:flex;gap:5px;justify-content:center;margin-top:12px"></div>
+        <button onclick="showPage('educacion')" style="width:100%;margin-top:10px;padding:8px;background:transparent;border:1px solid var(--b2);border-radius:8px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;font-family:inherit;transition:.2s" onmouseover="this.style.borderColor='var(--g)';this.style.color='var(--g)'" onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t2)'">
+          Ver educación financiera →
         </button>
       </div>
 
@@ -707,14 +689,17 @@ footer{background:#04342C;border-top:1px solid rgba(255,255,255,.06);padding:32p
       <div id="glosario-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
     </div>
 
-    <div class="edu-section-h"><h2>Tips financieros rápidos</h2><p>Reglas de oro que todo mexicano debería conocer</p></div>
-    <div class="tips-grid">
-      <div class="tip-card"><div class="tip-emoji">💡</div><div><div class="tip-title">Regla del 50/30/20</div><div class="tip-text">50% necesidades, 30% gustos, 20% ahorro e inversión. Si no puedes ahorrar el 20%, empieza con el 5% y aumenta cada mes.</div></div></div>
-      <div class="tip-card"><div class="tip-emoji">🚨</div><div><div class="tip-title">El CAT de las tarjetas de crédito</div><div class="tip-text">El Costo Anual Total promedio de tarjetas en México es 40%. Si debes $10,000 y pagas solo el mínimo, pagarás más de $30,000 en total.</div></div></div>
-      <div class="tip-card"><div class="tip-emoji">📈</div><div><div class="tip-title">Invierte antes de gastar</div><div class="tip-text">Automatiza tu ahorro el mismo día que recibes tu quincena. El dinero que no ves, no se gasta. Así funciona el ahorro forzoso.</div></div></div>
-      <div class="tip-card"><div class="tip-emoji">🏦</div><div><div class="tip-title">CETES vs cuenta de ahorro</div><div class="tip-text">Las cuentas bancarias pagan 3-6% anual. Los CETES pagan 11.2%. En $100,000, la diferencia es de $5,000 al año.</div></div></div>
-      <div class="tip-card"><div class="tip-emoji">⏰</div><div><div class="tip-title">El tiempo es tu mejor aliado</div><div class="tip-text">$1,000 al mes durante 30 años al 10% anual = $2.2 millones. El mismo dinero durante 20 años = $760,000. Empieza hoy.</div></div></div>
-      <div class="tip-card"><div class="tip-emoji">🏢</div><div><div class="tip-title">Para dueños de negocio</div><div class="tip-text">Separa siempre tus finanzas personales de las del negocio. Una cuenta bancaria empresarial puede salvarte de quiebras innecesarias.</div></div></div>
+    <div class="edu-section-h"><h2>Tips financieros rápidos</h2><p>Reglas de oro que todo mexicano debería conocer — navega entre todos</p></div>
+    <div style="margin-bottom:40px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div id="edu-tips-counter" style="font-size:12px;color:var(--t3)"></div>
+        <div style="display:flex;gap:8px">
+          <button onclick="prevEduTip()" style="width:32px;height:32px;border:1px solid var(--b2);border-radius:8px;background:var(--sur);color:var(--t2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.borderColor='var(--g)'" onmouseout="this.style.borderColor='var(--b2)'">‹</button>
+          <button onclick="nextEduTip()" style="width:32px;height:32px;border:1px solid var(--b2);border-radius:8px;background:var(--sur);color:var(--t2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s" onmouseover="this.style.borderColor='var(--g)'" onmouseout="this.style.borderColor='var(--b2)'">›</button>
+        </div>
+      </div>
+      <div id="edu-tips-grid" class="tips-grid"></div>
+      <div id="edu-tips-dots" style="display:flex;gap:6px;justify-content:center;margin-top:16px"></div>
     </div>
   </div>
 </div>
@@ -1169,6 +1154,82 @@ function updateFloatingWidget(recent) {
     </div>`;
   }).join('');
 }
+
+// ── TIPS CARRUSEL ──
+const allTips = [
+  {e:'💡',t:'Regla del 50/30/20',d:'50% necesidades, 30% gustos, 20% ahorro. Si no puedes el 20%, empieza con el 5% y aumenta cada mes.'},
+  {e:'🚨',t:'El CAT real de tu tarjeta',d:'El CAT promedio de tarjetas en México es 40%. Si debes $10,000 pagando solo el mínimo, pagarás más de $30,000.'},
+  {e:'📈',t:'Invierte antes de gastar',d:'Automatiza tu ahorro el día que cobras. El dinero que no ves, no se gasta. Así funciona el ahorro forzoso.'},
+  {e:'🏦',t:'CETES vs cuenta de ahorro',d:'Los bancos pagan 3-6% anual. Los CETES pagan 11.2%. En $100,000, la diferencia es $5,000 al año.'},
+  {e:'⏰',t:'El tiempo es tu mayor activo',d:'$1,000/mes durante 30 años al 10% = $2.2 millones. El mismo dinero en 20 años = $760,000. Empieza hoy.'},
+  {e:'🏢',t:'Separa tus finanzas',d:'Nunca mezcles dinero personal con el del negocio. Una cuenta bancaria empresarial puede salvarte de la quiebra.'},
+  {e:'✉️',t:'El truco del sobre',d:'Divide tu efectivo en sobres por categoría al inicio del mes. Cuando el sobre se acaba, se acabó. Sin excepciones.'},
+  {e:'⏳',t:'Regla de las 24 horas',d:'Antes de comprar algo mayor a $500, espera un día. El 80% de las veces ya no querrás comprarlo.'},
+  {e:'👤',t:'Págale primero a tu yo futuro',d:'Transfiere tu ahorro antes de pagar cualquier otra cosa. Tu yo del futuro te lo agradecerá.'},
+  {e:'⚖️',t:'El costo por hora de trabajo',d:'Antes de comprar algo, calcula cuántas horas de trabajo te cuesta. ¿Vale la pena ese esfuerzo?'},
+  {e:'💳',t:'Tarjeta de crédito = herramienta',d:'Úsala solo si puedes pagar el total a fin de mes. Si no puedes, es una trampa de deuda, no un beneficio.'},
+  {e:'🏥',t:'El seguro médico es inversión',d:'Un hospital en México puede costar $500,000. Un seguro de gastos médicos cuesta $5,000-15,000 al año. Haz las cuentas.'},
+  {e:'🧠',t:'Ricos vs pobres',d:'Los ricos compran activos que generan ingresos. Los pobres compran pasivos que generan gastos. Elige qué compras.'},
+  {e:'💼',t:'Tu mayor activo eres tú',d:'Tu capacidad de generar ingresos vale más que tu casa y tu carro juntos. Invierte en educarte constantemente.'},
+  {e:'📊',t:'Diversifica siempre',d:'No pongas todos tus ahorros en un solo instrumento. Divide entre CETES, ETFs, y algo de liquidez inmediata.'},
+  {e:'🎯',t:'Primero el fondo de emergencia',d:'Antes de invertir en nada más, ten 6 meses de gastos en CETES o cuenta de ahorro. Es tu red de seguridad.'},
+  {e:'🔄',t:'Reinvierte tus rendimientos',d:'No retires los intereses — déjalos crecer. El interés compuesto es la herramienta más poderosa en finanzas.'},
+  {e:'📉',t:'La inflación te roba en silencio',d:'Con 4.5% de inflación anual, $100,000 de hoy valen $64,000 en 10 años. Invierte o perdes poder adquisitivo.'},
+];
+
+const TIPS_PER_PAGE = 3;
+let tipIdx = 0, eduTipIdx = 0;
+let tipTimer = null;
+
+function renderSplitTips() {
+  const c = document.getElementById('tips-carousel');
+  const d = document.getElementById('tips-dots');
+  if (!c || !d) return;
+  const tip = allTips[tipIdx];
+  c.innerHTML = `<div style="animation:fadeUp .35s ease both">
+    <div style="display:flex;gap:12px;padding:12px;background:var(--gl);border-radius:10px;margin-bottom:8px">
+      <div style="font-size:22px;flex-shrink:0">${tip.e}</div>
+      <div><div style="font-size:12px;font-weight:700;color:var(--gm);margin-bottom:4px">${tip.t}</div><div style="font-size:12px;color:var(--gm);line-height:1.5;opacity:.8">${tip.d}</div></div>
+    </div>
+    <div style="font-size:10px;color:var(--t3);text-align:right">${tipIdx+1} de ${allTips.length} tips</div>
+  </div>`;
+  d.innerHTML = allTips.map((_,i) => `<div onclick="goTip(${i})" style="width:${i===tipIdx?'16px':'6px'};height:6px;border-radius:3px;background:${i===tipIdx?'var(--g)':'var(--b2)'};cursor:pointer;transition:all .3s"></div>`).join('');
+}
+
+function renderEduTips() {
+  const g = document.getElementById('edu-tips-grid');
+  const d = document.getElementById('edu-tips-dots');
+  const counter = document.getElementById('edu-tips-counter');
+  if (!g) return;
+  const page = Math.floor(eduTipIdx / TIPS_PER_PAGE);
+  const totalPages = Math.ceil(allTips.length / TIPS_PER_PAGE);
+  const pageTips = allTips.slice(page * TIPS_PER_PAGE, page * TIPS_PER_PAGE + TIPS_PER_PAGE);
+  if (counter) counter.textContent = `Página ${page+1} de ${totalPages}`;
+  g.style.opacity = '0';
+  g.style.transform = 'translateY(8px)';
+  g.style.transition = 'all .3s';
+  setTimeout(() => {
+    g.innerHTML = pageTips.map(tip => `<div class="tip-card"><div class="tip-emoji">${tip.e}</div><div><div class="tip-title">${tip.t}</div><div class="tip-text">${tip.d}</div></div></div>`).join('');
+    g.style.opacity = '1';
+    g.style.transform = 'translateY(0)';
+  }, 150);
+  if (d) d.innerHTML = Array.from({length:totalPages},(_,i) => `<div onclick="goEduTip(${i*TIPS_PER_PAGE})" style="width:${i===page?'20px':'8px'};height:8px;border-radius:4px;background:${i===page?'var(--g)':'var(--b2)'};cursor:pointer;transition:all .3s"></div>`).join('');
+}
+
+function nextTip() { tipIdx = (tipIdx+1) % allTips.length; renderSplitTips(); resetTipTimer(); }
+function prevTip() { tipIdx = (tipIdx-1+allTips.length) % allTips.length; renderSplitTips(); resetTipTimer(); }
+function goTip(i) { tipIdx = i; renderSplitTips(); resetTipTimer(); }
+function nextEduTip() { const total = allTips.length; eduTipIdx = Math.min(eduTipIdx + TIPS_PER_PAGE, total - TIPS_PER_PAGE); renderEduTips(); }
+function prevEduTip() { eduTipIdx = Math.max(0, eduTipIdx - TIPS_PER_PAGE); renderEduTips(); }
+function goEduTip(i) { eduTipIdx = i; renderEduTips(); }
+function resetTipTimer() { clearInterval(tipTimer); tipTimer = setInterval(nextTip, 5000); }
+
+renderSplitTips();
+renderEduTips();
+resetTipTimer();
+
+// ── MINI CALCULADORA (removida del banner, mantenemos función por si acaso) ──
+function calcMiniCetes() {}
 
 // ── SIMULADOR DE DEUDA ──
 function simDeuda() {
